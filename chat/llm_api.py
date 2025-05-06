@@ -1,0 +1,136 @@
+import ollama
+import openai
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+
+
+class LlmApi:
+    def __init__(self, model_obj):
+        """
+        Initialize the LlmApi with a model object.
+
+        Parameters:
+        - model_obj: An object representing the model. It must have the following attributes:
+            - description (str): The model name or identifier.
+            - is_external (bool): Indicates if the model is external (e.g., OpenAI) or local (e.g., Ollama).
+            - api_url (str, optional): Required if is_external=True. The base URL of the external API.
+            - api_key (str, optional): Required if is_external=True. The authentication token for the external API.
+        """
+        self.model_obj = model_obj
+        self.client = None  # Inicializamos el cliente como None
+
+    def validate(self):
+        """
+        Validates the model object's required fields based on whether it's external or local.
+
+        Raises:
+        - ValueError: If any required fields are missing or incorrectly formatted.
+        """
+        errors = []
+
+        if not self.model_obj.description:
+            errors.append("Model name (description) is required")
+
+        if self.model_obj.is_external:
+            if not self.model_obj.api_url:
+                errors.append("API URL is required for external models")
+            else:
+                try:
+                    URLValidator()(self.model_obj.api_url)
+                except ValidationError:
+                    errors.append("API URL is not valid")
+
+            if not self.model_obj.api_key:
+                errors.append("API key is required for external models")
+
+            # Validamos la conectividad y autenticación del modelo externo
+            if not errors:
+                try:
+                    # Creamos el cliente solo si no hay errores
+                    self.client = openai.OpenAI(
+                        api_key=self.model_obj.api_key,
+                        base_url=self.model_obj.api_url
+                    )
+                    # Realizamos una prueba de conectividad
+                    self.client.models.list()  # Conexión a la API externa
+                except openai.AuthenticationError:
+                    errors.append("Invalid or unauthorized API key")
+                except openai.APIConnectionError:
+                    errors.append(f"Failed to connect to the API at {self.model_obj.api_url}")
+                except openai.NotFoundError:
+                    errors.append(f"Model '{self.model_obj.description}' not found on the API")
+                except Exception as e:
+                    errors.append(f"Error trying to validate model: {e}")
+        if errors:
+            raise ValueError("\n".join([f"Model error: {e}" for e in errors]))
+
+    def _use_external_model(self, prompt):
+        """
+        Calls an external (OpenAI-compatible) API to generate a response to the prompt.
+
+        Parameters:
+        - prompt (str): The user input to be sent to the external model.
+
+        Yields:
+        - str: A stream of response chunks from the model (partial content).
+        
+        Raises:
+        - ValueError: If connection/authentication/model errors occur.
+        """
+        # Usamos el cliente ya inicializado
+        response = self.client.chat.completions.create(
+            model=self.model_obj.description,
+            messages=[{"role": "user", "content": prompt}],
+            stream=True,
+        )
+
+        for chunk in response:
+            content = chunk.choices[0].delta.content if chunk.choices and chunk.choices[0].delta else None
+            if content:
+                yield content
+
+    def _use_local_model(self, prompt):
+        """
+        Calls a local Ollama model to generate a response to the prompt.
+
+        Parameters:
+        - prompt (str): The user input to be sent to the local model.
+
+        Yields:
+        - str: A stream of response chunks from the local model.
+        
+        Raises:
+        - ValueError: If an error occurs during local model execution.
+        """
+        response_stream = ollama.chat(
+            model=self.model_obj.description,
+            messages=[{"role": "user", "content": prompt}],
+            stream=True,
+        )
+
+        for chunk in response_stream:
+            yield chunk['message']['content']
+
+    def generate_response(self, prompt):
+        """
+        Main method to generate a response using either a local or external model.
+
+        Parameters:
+        - prompt (str): The user message or question.
+
+        Yields:
+        - str: A stream of generated text from the selected model.
+        
+        Example:
+        >>> llm = LlmApi(model_obj)
+        >>> for chunk in llm.generate_response("What is the capital of France?"):
+        >>>     print(chunk, end="")
+        """
+        try:
+            self.validate()
+            if self.model_obj.is_external:
+                yield from self._use_external_model(prompt)
+            else:
+                yield from self._use_local_model(prompt)
+        except Exception as e:
+            yield f"Error: {str(e)}"

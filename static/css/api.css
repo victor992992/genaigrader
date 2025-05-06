@@ -1,0 +1,203 @@
+:root {
+  --primary-color: #3b82f6;
+  --secondary-color: #1e3a8a;
+  --success-color: #22c55e;
+  --error-color: #ef4444;
+  --background-dark: #0f172a;
+  --background-medium: #1e293b;
+  --text-color: #f8fafc;
+  --text-light: #94a3b8;
+  --border-color: #334155;
+}
+
+/* Estilos generales del formulario */
+#show-form {
+  background-color: var(--success-color);
+  color: var(--text-color);
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+#show-form:hover {
+  background-color: #16a34a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+}
+
+#creation-form {
+  background: var(--background-medium);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  display: none;
+  animation: slideDown 0.3s ease;
+}
+
+#creation-form input {
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  background: var(--background-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-color);
+  transition: border-color 0.3s ease;
+}
+
+#creation-form input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+#create-btn {
+  background-color: var(--success-color);
+  color: var(--text-color);
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+#create-btn:hover {
+  background-color: #16a34a;
+  transform: translateY(-2px);
+}
+
+/* Estilos de la tabla */
+#model-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem auto;
+  background: var(--background-medium);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+#model-table th, 
+#model-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+#model-table th {
+  background-color: var(--secondary-color);
+  font-weight: 600;
+}
+
+/* Botones de acciones */
+.edit-btn {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delete-btn {
+  background-color: var(--error-color);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 0.5rem;
+}
+
+.edit-btn:hover,
+.delete-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Animaciones */
+@keyframes slideDown {
+  from {
+      opacity: 0;
+      transform: translateY(-20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #creation-form {
+      padding: 1rem;
+  }
+  
+  #creation-form input {
+      padding: 0.5rem;
+  }
+  
+  #show-form, 
+  #create-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+  }
+  
+  #model-table th, 
+  #model-table td {
+      padding: 0.75rem;
+      font-size: 0.9rem;
+  }
+  
+  .edit-btn,
+  .delete-btn {
+      padding: 0.5rem;
+      font-size: 0.85rem;
+      margin-left: 0.3rem;
+  }
+}
+
+.save-btn {
+  background-color: var(--success-color);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn {
+  background-color: var(--error-color);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 0.5rem;
+}
+
+.save-btn:hover,
+.cancel-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.save-btn:active,
+.cancel-btn:active {
+  transform: translateY(0);
+}

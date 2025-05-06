@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Reevaluar Examen{% endblock %}
+{% block header %}Reevaluar Examen Existente{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/reevaluate.css' %}">
+{% endblock %}
+
+{% block content %}
+  <h2>Seleccionar Examen para Reevaluar</h2>
+  <form id="reevaluate-form">
+    {% csrf_token %}
+
+    <!-- Selección de examen existente -->
+    <div class="form-section">
+      <label for="exam-select">Examen existente:</label>
+      <select id="exam-select" name="exam_id" required>
+        {% for exam in exams %}
+          <option value="{{ exam.id }}">{{ exam.course.name }} - {{ exam.description }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    {% include "partials/model_select.html" %}
+
+    <!-- Prompt opcional -->
+    <div class="form-section">
+      <label for="user-prompt">Prompt personalizado (opcional):</label>
+      <input type="text" id="user-prompt" name="user_prompt" placeholder="Escribe tu prompt..."/>
+    </div>
+
+    <button type="submit">Reevaluar Examen</button>
+  </form>
+
+  {% include "partials/loading_feedback.html" %}
+
+  <div id="exam-results"></div>
+  <div id="exam-details"></div>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="{% static 'js/utils.js' %}"></script>
+  <script src="{% static 'js/reevaluate.js' %}"></script>
+{% endblock %}

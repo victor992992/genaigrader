@@ -1,0 +1,312 @@
+/* ============== VARIABLES GLOBALES ============== */
+:root {
+  --primary-color: #3b82f6;
+  --secondary-color: #1e3a8a;
+  --success-color: #22c55e;
+  --error-color: #ef4444;
+  --background-dark: #0f172a;
+  --background-medium: #1e293b;
+  --text-color: #f8fafc;
+  --text-light: #94a3b8;
+  --border-color: #334155;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.25);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --border-radius: 10px;
+  --box-padding: 1.25rem;
+}
+
+/* ============== ESTILOS BASE ============== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: var(--background-dark);
+  color: var(--text-color);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ============== LAYOUT PRINCIPAL ============== */
+.container {
+  max-width: 1200px;
+  margin: 1.5rem auto;
+  padding: 0 var(--box-padding);
+}
+
+h2 {
+  color: var(--primary-color);
+  font-size: 1.75rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  position: relative;
+}
+
+/* ============== FORMULARIO NUEVA ASIGNATURA ============== */
+.new-course-form {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: var(--box-padding);
+  background: var(--background-medium);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+#new-course-name {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--background-dark);
+  color: var(--text-color);
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+#new-course-name:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  outline: none;
+}
+
+.new-course-form button {
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 600;
+}
+
+.new-course-form button:hover {
+  background: var(--secondary-color);
+  transform: translateY(-2px);
+}
+
+/* ============== LISTADO DE ASIGNATURAS ============== */
+.courses-list {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.course-item {
+  padding: var(--box-padding);
+  background: var(--background-medium);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease;
+}
+
+.course-item:hover {
+  transform: translateY(-3px);
+}
+
+.course-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.course-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+/* ============== ACCIONES DE ASIGNATURA ============== */
+.course-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.edit-btn, .delete-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0.5rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-btn {
+  color: var(--primary-color);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.edit-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.delete-btn {
+  color: var(--error-color);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.delete-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+/* ============== LISTADO DE EXÁMENES ============== */
+.exams-list {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.exams-list h4 {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.exam-item {
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  background: var(--background-dark);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s ease;
+}
+
+.exam-item:hover {
+  transform: translateX(4px);
+}
+
+.exam-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.exam-link {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.exam-link:hover {
+  color: var(--primary-color);
+}
+
+/* ============== BOTONES EXPORTACIÓN ============== */
+.export-buttons {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.75rem;
+  background: linear-gradient(135deg, var(--success-color), #16a34a);
+  color: var(--text-color);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.export-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+      120deg,
+      transparent,
+      rgba(255, 255, 255, 0.15),
+      transparent
+  );
+  transition: 0.5s;
+}
+
+.export-btn:hover::before {
+  left: 100%;
+}
+
+.export-btn.small {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--success-color);
+  border: 2px solid var(--success-color);
+  backdrop-filter: blur(4px);
+}
+
+.export-btn.small:hover {
+  background: rgba(34, 197, 94, 0.3);
+  color: var(--text-color);
+}
+
+/* ============== RESPONSIVE DESIGN ============== */
+@media (max-width: 768px) {
+  .container {
+      padding: 0 1rem;
+  }
+
+  .course-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+  }
+
+  .course-actions {
+      width: 100%;
+      justify-content: flex-start;
+  }
+
+  .export-btn {
+      width: 100%;
+      justify-content: center;
+  }
+
+  .exam-item {
+      padding: 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+      --box-padding: 1rem;
+  }
+
+  .course-name {
+      font-size: 1.1rem;
+  }
+
+  .edit-btn, .delete-btn {
+      width: 32px;
+      height: 32px;
+  }
+
+  .exam-link {
+      font-size: 0.9rem;
+  }
+}

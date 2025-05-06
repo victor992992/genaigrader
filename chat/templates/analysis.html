@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Análisis General{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/analysis.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="analysis-container">
+    <h1 class="main-title">Análisis de Rendimiento</h1>
+    
+    <!-- Gráficos por asignatura -->
+    <div class="courses-section">
+        {% for course in course_data %}
+        <div class="course-card">
+            <div class="chart-header">{{ course.course.name }}</div>
+            <div class="course-charts">
+                <div class="chart-wrapper">
+                    <div class="chart-title">Promedio de Calificaciones</div>
+                    <canvas id="grade-chart-{{ course.course.id }}"></canvas>
+                </div>
+                <div class="chart-wrapper">
+                    <div class="chart-title">Tiempo Promedio</div>
+                    <canvas id="time-chart-{{ course.course.id }}"></canvas>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="no-courses">No tienes asignaturas registradas</p>
+        {% endfor %}
+    </div>
+
+    <!-- Gráficos generales -->
+    <div class="overall-section">
+        <div class="chart-header">Estadísticas Globales</div>
+        <div class="overall-charts">
+            <div class="chart-wrapper">
+                <div class="chart-title">Promedio General de Calificaciones</div>
+                <canvas id="overall-grade-chart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <div class="chart-title">Tiempo Promedio General</div>
+                <canvas id="overall-time-chart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Datos para gráficos -->
+{{ course_data|json_script:"course-data" }}
+{{ overall_model_averages|json_script:"overall-grades" }}
+{{ overall_time_averages|json_script:"overall-times" }}
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-error-bars@4.4.1/build/index.umd.min.js"></script>
+<script src="{% static 'js/analysis.js' %}"></script>
+{% endblock %}

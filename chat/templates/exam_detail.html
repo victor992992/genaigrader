@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Detalle de Examen{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/exam_detail.css' %}">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="exam-container">
+    <!-- Encabezado -->
+    <div class="header-section">
+        <h1 class="course-name">{{ course.name }}</h1>
+        <h2 class="exam-title">{{ exam.description }}</h2>
+    </div>
+    
+    <!-- Listado de Preguntas -->
+    <div class="questions-section">
+        <h3>Preguntas del Examen:</h3>
+        {% for question in questions %}
+        <div class="question-card">
+            <div class="question-header">
+                <span class="question-number">Pregunta {{ forloop.counter }}</span>
+                <span class="question-statement">{{ question.statement }}</span>
+            </div>
+            
+            <div class="options-list">
+                <h4>Opciones:</h4>
+                <ul>
+                    {% for option in question.questionoption_set.all %}
+                    <li class="{% if option == question.correct_option %}correct-option{% else %}regular-option{% endif %}">
+                        {{ option.content }}
+                        {% if option == question.correct_option %}
+                        <span class="correct-badge">✓ Correcta</span>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% empty %}
+        <p class="no-questions">No hay preguntas en este examen</p>
+        {% endfor %}
+    </div>
+
+    <!-- Sección de Evaluaciones -->
+    <div class="evaluations-section">
+        <h3>Historial de Evaluaciones</h3>
+        
+        <table id="evaluationsTable" class="display compact" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Modelo</th>
+                    <th>Prompt</th>
+                    <th>Nota</th>
+                    <th>Tiempo (s)</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for eval in evaluations %}
+                <tr data-eval-id="{{ eval.id }}">
+                    <td>{{ eval.ev_date|date:"d/m/Y" }}</td>
+                    <td>{{ eval.model.description }}</td>
+                    <td class="truncate-text">{{ eval.prompt|truncatechars:30 }}</td>
+                    <td>{{ eval.grade }}</td>
+                    <td>{{ eval.time|floatformat:2 }}</td>
+                    <td>
+                        <button class="delete-btn small" onclick="deleteEvaluation(this)">🗑️</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Sección de Gráficos -->
+    <div class="charts-container">
+        <div class="chart-section">
+            <div class="chart-header">Promedio de Calificaciones por Modelo</div>
+            <canvas id="modelAveragesChart"></canvas>
+        </div>
+        
+        <div class="chart-section">
+            <div class="chart-header">Tiempo Promedio de Respuesta por Modelo (segundos)</div>
+            <canvas id="timeAveragesChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Pasar datos de los gráficos a JavaScript -->
+    {{ model_averages|json_script:"model-averages-data" }}
+    {{ time_averages|json_script:"time-averages-data" }}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/exam_detail.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gráfico de calificaciones
+    const modelAverages = JSON.parse(document.getElementById('model-averages-data').textContent);
+    const ctx1 = document.getElementById('modelAveragesChart').getContext('2d');
+    new Chart(ctx1, {
+    type: 'bar',
+    data: {
+        labels: modelAverages.map(item => item.model__description),
+        datasets: [{
+            data: modelAverages.map(item => item.avg_grade.toFixed(2)),
+            backgroundColor: 'rgba(59, 130, 246, 0.3)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 1,
+            borderRadius: 4
+        }]
+    },
+    options: chartOptions('Promedio', '59, 130, 246')
+});
+
+
+    // Gráfico de tiempos
+    const timeAverages = JSON.parse(document.getElementById('time-averages-data').textContent);
+    const ctx2 = document.getElementById('timeAveragesChart').getContext('2d');
+    new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels: timeAverages.map(item => item.model__description),
+        datasets: [{
+            data: timeAverages.map(item => parseFloat(item.avg_time.toFixed(2))),
+            backgroundColor: 'rgba(255, 99, 132, 0.3)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+            borderRadius: 4
+        }]
+    },
+    options: chartOptions('Segundos', '255, 99, 132')
+});
+function chartOptions(yTitle) {
+    return {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+            padding: {
+                top: 50, // Más espacio para el título
+                bottom: 25,
+                left: 20,
+                right: 20
+            }
+        },
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                titleColor: '#94a3b8',
+                bodyColor: '#f8fafc',
+                borderColor: 'rgba(51, 65, 85, 0.5)',
+                titleFont: { family: 'Inter' },
+                bodyFont: { family: 'Inter' }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                ticks: { 
+                    color: '#94a3b8',
+                    font: { family: 'Inter' }
+                },
+                title: { 
+                    display: true, 
+                    text: yTitle,
+                    color: '#94a3b8',
+                    font: { family: 'Inter', size: 13 }
+                }
+            },
+            x: {
+                grid: { display: false },
+                ticks: { 
+                    color: '#94a3b8',
+                    font: { family: 'Inter' }
+                },
+                title: { 
+                    display: true, 
+                    text: 'Modelos LLM',
+                    color: '#94a3b8',
+                    font: { family: 'Inter', size: 13 }
+                }
+            }
+        }
+    };
+}
+
+});
+</script>
+{% endblock %}

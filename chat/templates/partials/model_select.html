@@ -1,0 +1,13 @@
+<label for="model-select">Modelo de IA:</label>
+<select id="model-select" name="model">
+  <optgroup label="Modelos Locales">
+    {% for model in local_models %}
+      <option value="{{ model.description }}">{{ model.description }}</option>
+    {% endfor %}
+  </optgroup>
+  <optgroup label="Modelos Externos">
+    {% for model in external_models %}
+      <option value="{{ model.description }}">{{ model.description }}</option>
+    {% endfor %}
+  </optgroup>
+</select>

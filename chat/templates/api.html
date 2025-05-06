@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Django API{% endblock %}
+{% block header %}Django API{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/api.css' %}">
+{% endblock %}
+
+{% block content %}
+  <h2>Modelos Externos</h2>
+  
+  <button id="show-form">Nuevo Modelo</button>
+  
+  <div id="creation-form" style="display:none; margin:20px 0;">
+    <input type="text" id="desc" placeholder="Descripción">
+    <input type="url" id="url" placeholder="URL">
+    <input type="text" id="key" placeholder="API Key">
+    <button id="create-btn">Crear</button>
+  </div>
+
+
+  <table id="model-table">
+      <thead>
+          <tr>
+              <th>Descripción</th>
+              <th>URL</th>
+              <th>API Key</th>
+              <th>Acciones</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for model in external_models %}
+          <tr data-id="{{ model.id }}">
+              <td data-full-value="{{ model.description }}">{{ model.description }}</td>
+              <td data-full-value="{{ model.api_url }}">{{ model.api_url }}</td>
+              <td data-full-value="{{ model.api_key }}">{{ model.api_key|truncatechars:10 }}</td>
+              <td>
+                  <button class="edit-btn">Editar</button>
+                  <button class="delete-btn">Borrar</button>
+              </td>
+          </tr>
+          {% empty %}
+          <tr>
+              <td colspan="4">No hay modelos externos registrados.</td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="{% static 'js/api.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,177 @@
+:root {
+  --primary-color: #3b82f6;
+  --secondary-color: #1e3a8a;
+  --success-color: #22c55e;
+  --error-color: #ef4444;
+  --background-dark: #0f172a;
+  --background-medium: #1e293b;
+  --text-color: #f8fafc;
+  --text-light: #94a3b8;
+  --border-color: #334155;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.25);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+h2 {
+  color: var(--primary-color);
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: 600;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#reevaluate-form {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--background-medium);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+}
+
+.form-section {
+  margin-bottom: 1.5rem;
+}
+
+.form-section label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+select, input[type="text"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: var(--transition);
+  background: var(--background-dark);
+  color: var(--text-color);
+}
+
+select:focus, input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+#model-select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+}
+
+#exam-form button[type="submit"] ,
+#reevaluate-form button[type="submit"] {
+  width: 100%;
+  padding: 1rem;
+  background: var(--primary-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  margin: 1.5rem 0;
+  border: 2px solid transparent;
+}
+
+#exam-form button[type="submit"]:hover ,
+#reevaluate-form button[type="submit"] {
+  background: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+#loading-indicator {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--background-medium);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--border-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+#progress-container {
+  width: 100%;
+  background-color: var(--border-color);
+  border-radius: 12px;
+  margin-top: 1rem;
+  overflow: hidden;
+}
+
+#progress-bar {
+  height: 24px;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.5s ease;
+}
+
+#exam-results {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--background-medium);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+#exam-details {
+  max-width: 800px;
+  margin: 2rem auto;
+}
+
+#exam-details > div {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: var(--background-medium);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+pre {
+  white-space: pre-wrap;
+  padding: 1rem;
+  background: var(--background-dark);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  margin: 1rem 0;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  #reevaluate-form, #loading-indicator, #exam-results, #exam-details {
+    margin: 1rem;
+    padding: 1rem;
+  }
+}

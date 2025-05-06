@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Django Course{% endblock %}
+{% block header %}Django Course App{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/course.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Tus Asignaturas</h2>
+    
+    <!-- Botón de exportación general -->
+    <div class="export-buttons">
+        <a href="{% url 'export_all_evaluations' %}" class="export-btn">
+            Exportar todas las evaluaciones
+        </a>
+    </div>
+
+    <!-- Formulario para nueva asignatura -->
+    <div class="new-course-form">
+        <input type="text" id="new-course-name" placeholder="Nueva asignatura">
+        <button onclick="createCourse()">Crear</button>
+    </div>
+
+    <!-- Lista de asignaturas -->
+    <div class="courses-list">
+        {% for course in courses %}
+        <div class="course-item" data-course-id="{{ course.id }}">
+            <div class="course-header">
+                <span class="course-name">{{ course.name }}</span>
+                <div class="course-actions">
+                    <a href="{% url 'export_course_evaluations' course.id %}" class="export-btn small">
+                        Exportar CSV
+                    </a>
+                    <button class="edit-btn" onclick="editCourse(this)">✏️</button>
+                    <button class="delete-btn" onclick="deleteCourse(this)">🗑️</button>
+                </div>
+            </div>
+            
+            <!-- Exámenes de la asignatura -->
+            <div class="exams-list">
+                <h4>Exámenes:</h4>
+                <ul>
+                    {% for exam in course.exam_set.all %}
+                    <li class="exam-item" data-exam-id="{{ exam.id }}">
+                        <div class="exam-content">
+                            <a href="{% url 'exam_detail' exam.id %}" class="exam-link" data-url="{% url 'exam_detail' exam.id %}">
+                                <span class="exam-description">{{ exam.description }}</span>
+                            </a>
+                            <div class="exam-actions">
+                                <button class="edit-btn" onclick="editExam(this)">✏️</button>
+                                <button class="delete-btn" onclick="deleteExam(this)">🗑️</button>
+                            </div>
+                        </div>
+                    </li>
+                    {% empty %}
+                        <li>No hay exámenes registrados</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% empty %}
+        <p>No tienes asignaturas registradas</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'js/course.js' %}"></script>
+{% endblock %}

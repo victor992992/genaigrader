@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Django Exams{% endblock %}
+{% block header %}Django Chat Exams{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/exam.css' %}">
+{% endblock %}
+
+{% block content %}
+  <h2>Exámenes</h2>
+  <form id="exam-form">
+    <!-- Selección de asignatura -->
+    <div id="course-selection">
+      <div>
+        <input type="radio" name="course_choice" id="existing-course" value="existing" checked>
+        <label for="existing-course">Asignatura existente:</label>
+        <select id="course-select" name="course_id">
+          {% for course in courses %}
+            <option value="{{ course.id }}">{{ course.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <input type="radio" name="course_choice" id="new-course-radio" value="new">
+        <label for="new-course-radio">Nueva asignatura:</label>
+        <input type="text" id="new-course-input" name="new_course" placeholder="Nombre de nueva asignatura" style="display: none;">
+      </div>
+    </div>
+
+    {% include "partials/model_select.html" %}
+
+    <!-- Archivo -->
+    <input type="file" name="file" accept=".txt" required />
+
+    <!-- Campos opcionales -->
+    <input type="text" id="user-prompt" name="user_prompt" placeholder="Escribe tu prompt (opcional)..."/>
+    <input type="text" id="user-exam" name="user_exam" placeholder="Nombre del examen (opcional)..."/>
+
+    <button type="submit">Subir Archivo</button>
+  </form>
+
+  {% include "partials/loading_feedback.html" %}
+
+  <div id="exam-results"></div>
+  <div id="exam-details"></div>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="{% static 'js/utils.js' %}"></script>
+  <script src="{% static 'js/exam.js' %}"></script>
+{% endblock %}
