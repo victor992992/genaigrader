@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Detalle de Examen{% endblock %}
+{% block title %}Exam Detail{% endblock %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/exam_detail.css' %}">
@@ -11,30 +11,30 @@
 
 {% block content %}
 <div class="exam-container">
-    <!-- Encabezado -->
+    <!-- Header -->
     <div class="header-section">
         <h1 class="course-name">{{ course.name }}</h1>
         <h2 class="exam-title">{{ exam.description }}</h2>
     </div>
     
-    <!-- Listado de Preguntas -->
+    <!-- Questions List -->
     <div class="questions-section">
-        <h3>Preguntas del Examen:</h3>
+        <h3>Exam Questions:</h3>
         {% for question in questions %}
         <div class="question-card">
             <div class="question-header">
-                <span class="question-number">Pregunta {{ forloop.counter }}</span>
+                <span class="question-number">Question {{ forloop.counter }}</span>
                 <span class="question-statement">{{ question.statement }}</span>
             </div>
             
             <div class="options-list">
-                <h4>Opciones:</h4>
+                <h4>Options:</h4>
                 <ul>
                     {% for option in question.questionoption_set.all %}
                     <li class="{% if option == question.correct_option %}correct-option{% else %}regular-option{% endif %}">
                         {{ option.content }}
                         {% if option == question.correct_option %}
-                        <span class="correct-badge">✓ Correcta</span>
+                        <span class="correct-badge">✓ Correct</span>
                         {% endif %}
                     </li>
                     {% endfor %}
@@ -42,23 +42,23 @@
             </div>
         </div>
         {% empty %}
-        <p class="no-questions">No hay preguntas en este examen</p>
+        <p class="no-questions">No questions in this exam</p>
         {% endfor %}
     </div>
 
-    <!-- Sección de Evaluaciones -->
+    <!-- Evaluations Section -->
     <div class="evaluations-section">
-        <h3>Historial de Evaluaciones</h3>
+        <h3>Evaluation History</h3>
         
         <table id="evaluationsTable" class="display compact" style="width:100%">
             <thead>
                 <tr>
-                    <th>Fecha</th>
-                    <th>Modelo</th>
+                    <th>Date</th>
+                    <th>Model</th>
                     <th>Prompt</th>
-                    <th>Nota</th>
-                    <th>Tiempo (s)</th>
-                    <th>Acciones</th>
+                    <th>Grade</th>
+                    <th>Time (s)</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -78,20 +78,20 @@
         </table>
     </div>
 
-    <!-- Sección de Gráficos -->
+    <!-- Charts Section -->
     <div class="charts-container">
         <div class="chart-section">
-            <div class="chart-header">Promedio de Calificaciones por Modelo</div>
+            <div class="chart-header">Average Grades by Model</div>
             <canvas id="modelAveragesChart"></canvas>
         </div>
         
         <div class="chart-section">
-            <div class="chart-header">Tiempo Promedio de Respuesta por Modelo (segundos)</div>
+            <div class="chart-header">Average Response Time by Model (seconds)</div>
             <canvas id="timeAveragesChart"></canvas>
         </div>
     </div>
 
-    <!-- Pasar datos de los gráficos a JavaScript -->
+    <!-- Pass chart data to JavaScript -->
     {{ model_averages|json_script:"model-averages-data" }}
     {{ time_averages|json_script:"time-averages-data" }}
 </div>

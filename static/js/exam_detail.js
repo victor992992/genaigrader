@@ -1,4 +1,4 @@
-// Función para obtener el token CSRF
+// Function to get CSRF token
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -14,15 +14,15 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// Configuración de DataTables
+// DataTables configuration
 $(document).ready(function() {
     $('#evaluationsTable').DataTable({
         dom: 'Bfrtip',
         buttons: [
             {
                 extend: 'csv',
-                text: 'Exportar CSV',
-                filename: 'evaluaciones_' + new Date().toISOString().split('T')[0],
+                text: 'Export CSV',
+                filename: 'evaluations_' + new Date().toISOString().split('T')[0],
                 exportOptions: {
                     columns: [0, 1, 2, 3, 4],
                     format: {
@@ -32,13 +32,13 @@ $(document).ready(function() {
                     }
                 },
                 customize: function(csv) {
-                    return 'Fecha,Modelo,Prompt,Nota,Tiempo\n' + csv;
+                    return 'Date,Model,Prompt,Grade,Time\n' + csv;
                 }
             },
             {
                 extend: 'pdf',
-                text: 'Exportar PDF',
-                filename: 'evaluaciones_' + new Date().toISOString().split('T')[0],
+                text: 'Export PDF',
+                filename: 'evaluations_' + new Date().toISOString().split('T')[0],
                 exportOptions: {
                     columns: [0, 1, 2, 3, 4],
                     stripHtml: true
@@ -52,7 +52,7 @@ $(document).ready(function() {
                         alignment: 'left'
                     };
                     doc.defaultStyle.fontSize = 10;
-                    doc.content[0].text = 'Historial de Evaluaciones - ' + document.querySelector('.course-name').textContent;
+                    doc.content[0].text = 'Evaluation History - ' + document.querySelector('.course-name').textContent;
                     doc.content[0].alignment = 'center';
                     doc.content[0].margin = [0, 0, 0, 15];
                     doc.content[1].layout = {
@@ -73,10 +73,10 @@ $(document).ready(function() {
             { className: 'dt-body-center', targets: [3,4] }
         ],
         language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
+            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/en-US.json',
             buttons: {
-                csv: 'Exportar CSV',
-                pdf: 'Exportar PDF'
+                csv: 'Export CSV',
+                pdf: 'Export PDF'
             }
         }
     });
@@ -87,7 +87,7 @@ function deleteEvaluation(button) {
     const evalId = row.data('eval-id');
     const table = $('#evaluationsTable').DataTable();
 
-    if (confirm('¿Borrar esta evaluación?')) {
+    if (confirm('Delete this evaluation?')) {
         fetch(`/evaluation/delete/${evalId}/`, {
             method: 'DELETE',
             headers: {
@@ -97,13 +97,13 @@ function deleteEvaluation(button) {
             if(response.ok) {
                 table.row(row).remove().draw(false);
             } else {
-                alert('Error al eliminar');
+                alert('Error deleting');
             }
         });
     }
 }
 
-// Gráficos con intervalos de confianza
+// Charts with confidence intervals
 document.addEventListener('DOMContentLoaded', function () {
     const modelAverages = JSON.parse(document.getElementById('model-averages-data').textContent);
     const timeAverages = JSON.parse(document.getElementById('time-averages-data').textContent);
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('modelAveragesChart'),
             modelAverages,
             'avg',
-            'Calificaciones',
+            'Grades',
             gradeBarColour,
             2
         );
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('timeAveragesChart'),
             timeAverages,
             'avg',
-            'Tiempo (s)',
+            'Time (s)',
             timeBarColour,
             1
         );
