@@ -100,7 +100,8 @@
 {% block extra_scripts %}
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-error-bars@4.4.1/build/index.umd.min.js"></script>
 <script src="{% static 'js/exam_detail.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
@@ -108,100 +109,4 @@
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Gráfico de calificaciones
-    const modelAverages = JSON.parse(document.getElementById('model-averages-data').textContent);
-    const ctx1 = document.getElementById('modelAveragesChart').getContext('2d');
-    new Chart(ctx1, {
-    type: 'bar',
-    data: {
-        labels: modelAverages.map(item => item.model__description),
-        datasets: [{
-            data: modelAverages.map(item => item.avg_grade.toFixed(2)),
-            backgroundColor: 'rgba(59, 130, 246, 0.3)',
-            borderColor: 'rgba(59, 130, 246, 1)',
-            borderWidth: 1,
-            borderRadius: 4
-        }]
-    },
-    options: chartOptions('Promedio', '59, 130, 246')
-});
-
-
-    // Gráfico de tiempos
-    const timeAverages = JSON.parse(document.getElementById('time-averages-data').textContent);
-    const ctx2 = document.getElementById('timeAveragesChart').getContext('2d');
-    new Chart(ctx2, {
-    type: 'bar',
-    data: {
-        labels: timeAverages.map(item => item.model__description),
-        datasets: [{
-            data: timeAverages.map(item => parseFloat(item.avg_time.toFixed(2))),
-            backgroundColor: 'rgba(255, 99, 132, 0.3)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1,
-            borderRadius: 4
-        }]
-    },
-    options: chartOptions('Segundos', '255, 99, 132')
-});
-function chartOptions(yTitle) {
-    return {
-        responsive: true,
-        maintainAspectRatio: false,
-        layout: {
-            padding: {
-                top: 50, // Más espacio para el título
-                bottom: 25,
-                left: 20,
-                right: 20
-            }
-        },
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                backgroundColor: 'rgba(15, 23, 42, 0.95)',
-                titleColor: '#94a3b8',
-                bodyColor: '#f8fafc',
-                borderColor: 'rgba(51, 65, 85, 0.5)',
-                titleFont: { family: 'Inter' },
-                bodyFont: { family: 'Inter' }
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: { color: 'rgba(51, 65, 85, 0.3)' },
-                ticks: { 
-                    color: '#94a3b8',
-                    font: { family: 'Inter' }
-                },
-                title: { 
-                    display: true, 
-                    text: yTitle,
-                    color: '#94a3b8',
-                    font: { family: 'Inter', size: 13 }
-                }
-            },
-            x: {
-                grid: { display: false },
-                ticks: { 
-                    color: '#94a3b8',
-                    font: { family: 'Inter' }
-                },
-                title: { 
-                    display: true, 
-                    text: 'Modelos LLM',
-                    color: '#94a3b8',
-                    font: { family: 'Inter', size: 13 }
-                }
-            }
-        }
-    };
-}
-
-});
-</script>
 {% endblock %}

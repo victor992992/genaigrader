@@ -24,7 +24,7 @@ $(document).ready(function() {
                 text: 'Exportar CSV',
                 filename: 'evaluaciones_' + new Date().toISOString().split('T')[0],
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4], // Excluir columna de acciones
+                    columns: [0, 1, 2, 3, 4],
                     format: {
                         body: function(data, row, column, node) {
                             return data.replace(/<[^>]*>/g, '').replace(/�/g, '✓');
@@ -40,7 +40,7 @@ $(document).ready(function() {
                 text: 'Exportar PDF',
                 filename: 'evaluaciones_' + new Date().toISOString().split('T')[0],
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4], // Excluir columna de acciones
+                    columns: [0, 1, 2, 3, 4],
                     stripHtml: true
                 },
                 customize: function(doc) {
@@ -80,10 +80,6 @@ $(document).ready(function() {
             }
         }
     });
-
-    if(document.getElementById('modelAveragesChart')) {
-            initializeChart();
-    }
 });
 
 function deleteEvaluation(button) {
@@ -106,3 +102,96 @@ function deleteEvaluation(button) {
         });
     }
 }
+
+// Gráficos con intervalos de confianza
+document.addEventListener('DOMContentLoaded', function () {
+    const modelAverages = JSON.parse(document.getElementById('model-averages-data').textContent);
+    const timeAverages = JSON.parse(document.getElementById('time-averages-data').textContent);
+    const gradeBarColour = '59,130,246';
+    const timeBarColour = '255,99,132';
+
+    const calculateRange = (data) => ({
+        min: Math.min(...data.map(d => d.yMin)),
+        max: Math.max(...data.map(d => d.yMax)) + 2
+    });
+
+    const createErrorBarChart = (canvas, data, field, title, color, decimals = 2) => {
+        const yRange = calculateRange(data);
+        
+        new Chart(canvas, {
+            type: 'barWithErrorBars',
+            data: {
+                labels: data.map(d => d.model__description),
+                datasets: [{
+                    label: title,
+                    data: data.map(item => ({
+                        x: item.model__description,
+                        y: item[field],
+                        yMin: item.yMin,
+                        yMax: item.yMax
+                    })),
+                    backgroundColor: `rgba(${color}, 0.3)`,
+                    borderColor: `rgba(${color}, 1)`,
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    errorBarWhiskerColor: '#FFF',
+                    errorBarColor: '#FFF'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => {
+                                const r = ctx.raw;
+                                return `${title}: ${r.y.toFixed(decimals)} (${r.yMin.toFixed(decimals)} - ${r.yMax.toFixed(decimals)})`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        ticks: { color: '#94a3b8' },
+                        grid: { display: false }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            color: '#94a3b8',
+                            callback: v => v.toFixed(decimals)
+                        },
+                        grid: { color: 'rgba(51, 65, 85, 0.5)' },
+                        min: yRange.min,
+                        max: yRange.max
+                    }
+                }
+            }
+        });
+    };
+
+    if (modelAverages.length) {
+        createErrorBarChart(
+            document.getElementById('modelAveragesChart'),
+            modelAverages,
+            'avg',
+            'Calificaciones',
+            gradeBarColour,
+            2
+        );
+    }
+    
+    if (timeAverages.length) {
+        createErrorBarChart(
+            document.getElementById('timeAveragesChart'),
+            timeAverages,
+            'avg',
+            'Tiempo (s)',
+            timeBarColour,
+            1
+        );
+    }
+});

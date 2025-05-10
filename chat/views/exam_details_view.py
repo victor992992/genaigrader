@@ -5,6 +5,8 @@ from chat.models import Exam, Question, Evaluation
 from django.views.decorators.http import require_http_methods
 from django.db.models import Avg
 
+from chat.services.graphics_service import process_evaluations_for_graphics, compute_model_statistics
+
 @login_required
 def exam_detail(request, exam_id):
     exam = get_object_or_404(
@@ -18,23 +20,15 @@ def exam_detail(request, exam_id):
         course__user=request.user
     )
     
-    model_averages = list(
-        exam.evaluation_set.values('model__description')
-        .annotate(avg_grade=Avg('grade'))
-        .order_by('model__description')
-    )
-    
-    time_averages = list(
-        exam.evaluation_set.values('model__description')
-        .annotate(avg_time=Avg('time'))  # Actualizado a 'time'
-        .order_by('model__description')
-    )
+    evaluations = exam.evaluation_set.all()
+    model_values = process_evaluations_for_graphics(evaluations)
+    model_averages, time_averages = compute_model_statistics(model_values)
     
     return render(request, 'exam_detail.html', {
         'exam': exam,
         'course': exam.course,
         'questions': exam.question_set.all(),
-        'evaluations': exam.evaluation_set.all(),
+        'evaluations': evaluations,
         'model_averages': model_averages,
         'time_averages': time_averages
     })
