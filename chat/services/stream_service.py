@@ -30,10 +30,10 @@ def stream_responses(questions, user_prompt, llm, total_questions, exam):
         ),
         ev_date=timezone.now(),
         grade=0,
-        model=llm.model_obj,  # Store original model object
+        model=llm.model_obj, 
         exam=exam,
-        time=0.0
-    )
+        
+        time=0.0    )
 
     for index, question in enumerate(questions):
         start_time = time.monotonic()

@@ -1,6 +1,5 @@
 from ..models import Question
-from chat.llm_api import LlmApi  # Asegúrate de que esté bien importado
-
+from chat.llm_api import LlmApi 
 
 def generate_prompt(question, user_prompt):
     """
