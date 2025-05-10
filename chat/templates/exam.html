@@ -10,13 +10,13 @@
 {% endblock %}
 
 {% block content %}
-  <h2>Exámenes</h2>
+  <h2>Exams</h2>
   <form id="exam-form">
-    <!-- Selección de asignatura -->
+    <!-- Course selection -->
     <div id="course-selection">
       <div>
         <input type="radio" name="course_choice" id="existing-course" value="existing" checked>
-        <label for="existing-course">Asignatura existente:</label>
+        <label for="existing-course">Existing course:</label>
         <select id="course-select" name="course_id">
           {% for course in courses %}
             <option value="{{ course.id }}">{{ course.name }}</option>
@@ -25,21 +25,21 @@
       </div>
       <div>
         <input type="radio" name="course_choice" id="new-course-radio" value="new">
-        <label for="new-course-radio">Nueva asignatura:</label>
-        <input type="text" id="new-course-input" name="new_course" placeholder="Nombre de nueva asignatura" style="display: none;">
+        <label for="new-course-radio">New course:</label>
+        <input type="text" id="new-course-input" name="new_course" placeholder="Name of new course" style="display: none;">
       </div>
     </div>
 
     {% include "partials/model_select.html" %}
 
-    <!-- Archivo -->
+    <!-- File upload -->
     <input type="file" name="file" accept=".txt" required />
 
-    <!-- Campos opcionales -->
-    <input type="text" id="user-prompt" name="user_prompt" placeholder="Escribe tu prompt (opcional)..."/>
-    <input type="text" id="user-exam" name="user_exam" placeholder="Nombre del examen (opcional)..."/>
+    <!-- Optional fields -->
+    <input type="text" id="user-prompt" name="user_prompt" placeholder="Write your prompt (optional)..."/>
+    <input type="text" id="user-exam" name="user_exam" placeholder="Exam name (optional)..."/>
 
-    <button type="submit">Subir Archivo</button>
+    <button type="submit">Upload File</button>
   </form>
 
   {% include "partials/loading_feedback.html" %}

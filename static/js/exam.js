@@ -1,4 +1,3 @@
-// exam.js
 $(document).ready(function () {
   function toggleCourseInputs() {
     const courseChoice = $('input[name="course_choice"]:checked').val();
@@ -19,7 +18,7 @@ $(document).ready(function () {
 
     const courseChoice = $('input[name="course_choice"]:checked').val();
     if (courseChoice === 'new' && !$('#new-course-input').val().trim()) {
-      alert('Por favor ingresa el nombre de la nueva asignatura');
+      alert('Please enter the name of the new course');
       return;
     }
 
@@ -33,14 +32,14 @@ $(document).ready(function () {
     })
       .then((response) => {
         if (!response.ok) {
-          return handleErrorResponse(response, "Hubo un error con el procesamiento del archivo.");
+          return handleErrorResponse(response, "There was an error processing the file.");
         }
         return handleStreamingResponse(response, updateUI);
       })
       .catch((error) => {
         console.error("Error:", error);
         $("#loading-indicator").hide();
-        $("#exam-results").html("Error al procesar el archivo.");
+        $("#exam-results").html("Error processing the file.");
       });
   });
 });

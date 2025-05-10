@@ -1,5 +1,3 @@
-// utils.js
-
 function updateUI(progress) {
   const percentage = (progress.processed_questions / progress.total_questions) * 100;
   $("#progress-bar").css("width", percentage + "%").text(percentage.toFixed(0) + "%");
@@ -8,24 +6,24 @@ function updateUI(progress) {
   const responseColor = response.is_correct ? "var(--success-color)" : "var(--error-color)";
   const detailsHtml = `
     <div style="border: 1px solid var(--border-color); padding: 10px; margin: 10px 0; border-radius: 5px; background: var(--background-medium);">
-      <p><strong>Tiempo respuesta:</strong> ${progress.time}s</p>
+      <p><strong>Response time:</strong> ${progress.time}s</p>
       <p><strong>Prompt:</strong></p>
       <pre>${response.user_prompt}</pre>
-      <p><strong>Pregunta ${progress.processed_questions}:</strong></p>
+      <p><strong>Question ${progress.processed_questions}:</strong></p>
       <pre>${response.question_prompt}</pre>
-      <p><strong>Respuesta del modelo:</strong> <span style="color: ${responseColor}; font-weight: bold;">${response.response}</span></p>
-      <p><strong>Opción correcta:</strong> ${response.correct_option}</p>
+      <p><strong>Model response:</strong> <span style="color: ${responseColor}; font-weight: bold;">${response.response}</span></p>
+      <p><strong>Correct option:</strong> ${response.correct_option}</p>
     </div>
   `;
   $("#exam-details").append(detailsHtml);
 
   if (progress.processed_questions === progress.total_questions) {
-      let totalTime = progress.total_time ? progress.total_time.toFixed(2) : 'N/A';
-      $("#exam-results").html(`
-          Archivo procesado.<br>
-          Respuestas correctas: ${progress.correct_count}/${progress.total_questions}<br>
-          Tiempo total de evaluación: ${totalTime}s
-      `);
+    let totalTime = progress.total_time ? progress.total_time.toFixed(2) : 'N/A';
+    $("#exam-results").html(`
+      File processed.<br>
+      Correct answers: ${progress.correct_count}/${progress.total_questions}<br>
+      Total evaluation time: ${totalTime}s
+    `);
   }
 }
 
@@ -35,26 +33,26 @@ function handleStreamingResponse(response, onProgress) {
   let buffer = '';
 
   function processStream({ done, value }) {
-      if (done) {
-          $("#loading-indicator").hide();
-          return;
+    if (done) {
+      $("#loading-indicator").hide();
+      return;
+    }
+
+    buffer += decoder.decode(value, { stream: true });
+    const chunks = buffer.split("\n\n");
+    buffer = chunks.pop() || '';
+
+    chunks.forEach(chunk => {
+      if (chunk.trim() === "") return;
+      try {
+        const data = JSON.parse(chunk.replace("data: ", ""));
+        onProgress(data);
+      } catch (e) {
+        console.error("Error parsing chunk:", e);
       }
+    });
 
-      buffer += decoder.decode(value, { stream: true });
-      const chunks = buffer.split("\n\n");
-      buffer = chunks.pop() || '';
-
-      chunks.forEach(chunk => {
-          if (chunk.trim() === "") return;
-          try {
-              const data = JSON.parse(chunk.replace("data: ", ""));
-              onProgress(data);
-          } catch (e) {
-              console.error("Error parsing chunk:", e);
-          }
-      });
-
-      return reader.read().then(processStream);
+    return reader.read().then(processStream);
   }
 
   return reader.read().then(processStream);
@@ -62,10 +60,10 @@ function handleStreamingResponse(response, onProgress) {
 
 function handleErrorResponse(response, defaultMessage) {
   return response.text().then((text) => {
-      alert("Error en el modelo: " + text);
-      $("#loading-indicator").hide();
-      $("#exam-results").html(defaultMessage);
-      throw new Error(text);
+    alert("Model error: " + text);
+    $("#loading-indicator").hide();
+    $("#exam-results").html(defaultMessage);
+    throw new Error(text);
   });
 }
 
@@ -79,14 +77,14 @@ function resetUI() {
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== "") {
-      const cookies = document.cookie.split(";");
-      for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          if (cookie.substring(0, name.length + 1) === name + "=") {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-          }
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
       }
+    }
   }
   return cookieValue;
 }
