@@ -3,7 +3,7 @@ function createCourse() {
     const name = nameInput.value.trim();
     
     if (!name) {
-        alert('Por favor ingresa un nombre válido');
+        alert('Please enter a valid name');
         return;
     }
 
@@ -19,14 +19,14 @@ function createCourse() {
     .then(data => {
         if (data.status === 'success') {
             nameInput.value = '';
-            location.reload(); // Recargar para mostrar el nuevo curso
+            location.reload(); // Reload to show the new course
         } else {
             alert(`Error: ${data.message}`);
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error al crear la asignatura');
+        alert('Error creating the course');
     });
 }
 
@@ -36,21 +36,21 @@ function editCourse(button) {
     const nameSpan = courseItem.querySelector('.course-name');
     const currentName = nameSpan.textContent;
     
-    // Crear elementos de edición
+    // Create editing elements
     const input = document.createElement('input');
     input.type = 'text';
     input.value = currentName;
     input.className = 'edit-input';
     
     const saveBtn = document.createElement('button');
-    saveBtn.textContent = 'Guardar';
+    saveBtn.textContent = 'Save';
     saveBtn.className = 'save-btn';
     
     const cancelBtn = document.createElement('button');
-    cancelBtn.textContent = 'Cancelar';
+    cancelBtn.textContent = 'Cancel';
     cancelBtn.className = 'cancel-btn';
     
-    // Reemplazar elemento
+    // Replace element
     const editContainer = document.createElement('div');
     editContainer.className = 'edit-container';
     editContainer.appendChild(input);
@@ -60,7 +60,7 @@ function editCourse(button) {
     nameSpan.replaceWith(editContainer);
     input.focus();
     
-    // Manejar guardado
+    // Handle save
     saveBtn.onclick = () => {
         const newName = input.value.trim();
         if (!newName) return;
@@ -80,22 +80,22 @@ function editCourse(button) {
         });
     };
     
-    // Manejar cancelación
+    // Handle cancel
     cancelBtn.onclick = () => {
         editContainer.replaceWith(nameSpan);
     };
 }
 
-function deleteCourse(button) { // Recibir el botón como parámetro
+function deleteCourse(button) { // Receive the button as a parameter
     const courseItem = button.closest('.course-item');
     const courseId = courseItem.dataset.courseId;
     
-    // Crear elementos de confirmación
+    // Create confirmation elements
     const confirmationDiv = document.createElement('div');
     confirmationDiv.className = 'confirmation-box';
     
     const confirmText = document.createElement('span');
-    confirmText.textContent = '¿Eliminar asignatura?';
+    confirmText.textContent = 'Delete course?';
     
     const confirmBtn = document.createElement('button');
     confirmBtn.textContent = '✓';
@@ -105,16 +105,16 @@ function deleteCourse(button) { // Recibir el botón como parámetro
     cancelBtn.textContent = '✕';
     cancelBtn.className = 'cancel-delete-btn';
     
-    // Insertar elementos
+    // Insert elements
     confirmationDiv.appendChild(confirmText);
     confirmationDiv.appendChild(confirmBtn);
     confirmationDiv.appendChild(cancelBtn);
     
-    // Reemplazar botones originales
+    // Replace original buttons
     const actionsDiv = courseItem.querySelector('.course-actions');
     actionsDiv.replaceWith(confirmationDiv);
     
-    // Manejar confirmación
+    // Handle confirmation
     confirmBtn.onclick = () => {
         fetch(`/course/delete/${courseId}/`, {
             method: 'DELETE',
@@ -124,20 +124,20 @@ function deleteCourse(button) { // Recibir el botón como parámetro
             }
         }).then(response => {
             if (response.ok) {
-                courseItem.remove(); // Eliminar elemento del DOM sin recargar
+                courseItem.remove(); // Remove element from the DOM without reloading
             } else {
-                location.reload(); // Recargar si hay error
+                location.reload(); // Reload on error
             }
         });
     };
     
-    // Manejar cancelación
+    // Handle cancel
     cancelBtn.onclick = () => {
-        confirmationDiv.replaceWith(actionsDiv); // Restaurar botones originales
+        confirmationDiv.replaceWith(actionsDiv); // Restore original buttons
     };
 }
 
-// Función para obtener el token CSRF (sin cambios)
+// Function to get the CSRF token (unchanged)
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -158,10 +158,10 @@ function editExam(button) {
     const examId = examItem.dataset.examId;
     const examContent = examItem.querySelector('.exam-content');
     const examLink = examContent.querySelector('.exam-link');
-    const originalUrl = examLink.dataset.url; // URL desde data-url
+    const originalUrl = examLink.dataset.url; // URL from data-url
     const currentDescription = examContent.querySelector('.exam-description').textContent;
 
-    // Crear elementos de edición
+    // Create editing elements
     const editContainer = document.createElement('div');
     editContainer.className = 'exam-edit-container';
 
@@ -171,26 +171,26 @@ function editExam(button) {
     input.className = 'exam-edit-input';
 
     const saveBtn = document.createElement('button');
-    saveBtn.textContent = 'Guardar';
+    saveBtn.textContent = 'Save';
     saveBtn.className = 'exam-save-btn';
 
     const cancelBtn = document.createElement('button');
-    cancelBtn.textContent = 'Cancelar';
+    cancelBtn.textContent = 'Cancel';
     cancelBtn.className = 'exam-cancel-btn';
 
-    // Reemplazar contenido
+    // Replace content
     examContent.replaceWith(editContainer);
     editContainer.append(input, saveBtn, cancelBtn);
     input.focus();
 
-    // Función para restaurar el contenido
+    // Function to restore the content
     const restoreContent = (description) => {
         const newExamContent = document.createElement('div');
         newExamContent.className = 'exam-content';
 
         const newLink = document.createElement('a');
         newLink.className = 'exam-link';
-        newLink.href = originalUrl; // Usamos la URL guardada
+        newLink.href = originalUrl; // Use saved URL
         newLink.dataset.url = originalUrl;
 
         const newDescription = document.createElement('span');
@@ -203,25 +203,25 @@ function editExam(button) {
         const newEditBtn = document.createElement('button');
         newEditBtn.className = 'edit-btn';
         newEditBtn.textContent = '✏️';
-        newEditBtn.onclick = () => editExam(newEditBtn); // Reconectar evento
+        newEditBtn.onclick = () => editExam(newEditBtn); // Reconnect event
 
         const newDeleteBtn = document.createElement('button');
         newDeleteBtn.className = 'delete-btn';
         newDeleteBtn.textContent = '🗑️';
-        newDeleteBtn.onclick = () => deleteExam(newDeleteBtn); // Reconectar evento
+        newDeleteBtn.onclick = () => deleteExam(newDeleteBtn); // Reconnect event
 
-        // Construir estructura
+        // Build structure
         newLink.appendChild(newDescription);
         newActions.append(newEditBtn, newDeleteBtn);
         newExamContent.append(newLink, newActions);
         
-        // Reemplazar en el DOM
+        // Replace in DOM
         editContainer.replaceWith(newExamContent);
     };
 
-    // Manejador de Guardar
+    // Save handler
     saveBtn.onclick = async (e) => {
-        e.stopPropagation(); // Importante!
+        e.stopPropagation(); // Important!
         const newDescription = input.value.trim();
         
         if (!newDescription) return;
@@ -244,17 +244,18 @@ function editExam(button) {
         }
     };
 
-    // Manejador de Cancelar
+    // Cancel handler
     cancelBtn.onclick = (e) => {
         e.stopPropagation();
         restoreContent(currentDescription);
     };
 }
+
 function deleteExam(button) {
     const examItem = button.closest('li');
     const examId = examItem.dataset.examId;
     
-    if (confirm('¿Eliminar este examen?')) {
+    if (confirm('Delete this exam?')) {
         fetch(`/course/exam/delete/${examId}/`, {
             method: 'DELETE',
             headers: {
@@ -262,7 +263,7 @@ function deleteExam(button) {
             }
         }).then(response => {
             if (response.ok) {
-                examItem.remove(); // Eliminar del DOM sin recargar
+                examItem.remove(); // Remove from DOM without reloading
             }
         });
     }

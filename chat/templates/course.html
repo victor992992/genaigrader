@@ -10,22 +10,22 @@
 
 {% block content %}
 <div class="container">
-    <h2>Tus Asignaturas</h2>
+    <h2>Your Courses</h2>
     
-    <!-- Botón de exportación general -->
+    <!-- Export all button -->
     <div class="export-buttons">
         <a href="{% url 'export_all_evaluations' %}" class="export-btn">
-            Exportar todas las evaluaciones
+            Export all evaluations
         </a>
     </div>
 
-    <!-- Formulario para nueva asignatura -->
+    <!-- Form to create new course -->
     <div class="new-course-form">
-        <input type="text" id="new-course-name" placeholder="Nueva asignatura">
-        <button onclick="createCourse()">Crear</button>
+        <input type="text" id="new-course-name" placeholder="New course">
+        <button onclick="createCourse()">Create</button>
     </div>
 
-    <!-- Lista de asignaturas -->
+    <!-- Courses list -->
     <div class="courses-list">
         {% for course in courses %}
         <div class="course-item" data-course-id="{{ course.id }}">
@@ -33,16 +33,16 @@
                 <span class="course-name">{{ course.name }}</span>
                 <div class="course-actions">
                     <a href="{% url 'export_course_evaluations' course.id %}" class="export-btn small">
-                        Exportar CSV
+                        Export CSV
                     </a>
                     <button class="edit-btn" onclick="editCourse(this)">✏️</button>
                     <button class="delete-btn" onclick="deleteCourse(this)">🗑️</button>
                 </div>
             </div>
             
-            <!-- Exámenes de la asignatura -->
+            <!-- Exams list -->
             <div class="exams-list">
-                <h4>Exámenes:</h4>
+                <h4>Exams:</h4>
                 <ul>
                     {% for exam in course.exam_set.all %}
                     <li class="exam-item" data-exam-id="{{ exam.id }}">
@@ -57,13 +57,13 @@
                         </div>
                     </li>
                     {% empty %}
-                        <li>No hay exámenes registrados</li>
+                        <li>No exams registered</li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
         {% empty %}
-        <p>No tienes asignaturas registradas</p>
+        <p>No courses registered</p>
         {% endfor %}
     </div>
 </div>

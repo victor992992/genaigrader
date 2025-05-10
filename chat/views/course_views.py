@@ -88,25 +88,25 @@ def delete_exam(request, exam_id):
     
 @login_required
 def export_all_evaluations(request):
-    # Configurar respuesta
-    response = HttpResponse(content_type='text/csv; charset=utf-8-sig')  # Codificación para Excel
-    response['Content-Disposition'] = 'attachment; filename="todas_evaluaciones.csv"'
+    # Set response
+    response = HttpResponse(content_type='text/csv; charset=utf-8-sig')  # Encoding for Excel
+    response['Content-Disposition'] = 'attachment; filename="all_evaluations.csv"'
     
-    # Crear writer con configuraciones específicas
+    # Create CSV writer
     writer = csv.writer(response, delimiter=',', quoting=csv.QUOTE_ALL)
     
-    # Escribir encabezado
+    # Write header
     writer.writerow([
-        'Asignatura', 
-        'Examen', 
-        'Fecha', 
-        'Modelo', 
+        'Course', 
+        'Exam', 
+        'Date', 
+        'Model', 
         'Prompt', 
-        'Nota', 
-        'Tiempo (s)'
+        'Grade', 
+        'Time (s)'
     ])
     
-    # Obtener datos con relaciones
+    # Get evaluations with related data
     evaluations = Evaluation.objects.filter(
         exam__course__user=request.user
     ).select_related(
@@ -114,48 +114,48 @@ def export_all_evaluations(request):
         'model'
     ).order_by('exam__course__name', 'exam__description')
     
-    # Escribir filas
+    # Write rows
     for eval in evaluations:
         writer.writerow([
-            eval.exam.course.name,        # Columna 1
-            eval.exam.description,        # Columna 2
-            eval.ev_date.strftime("%d/%m/%Y"),  # Columna 3
-            eval.model.description,       # Columna 4
-            eval.prompt,                  # Columna 5
-            str(eval.grade).replace('.', ','),  # Nota con formato decimal español
-            str(round(eval.time, 2)).replace('.', ',')  # Tiempo formato ES
+            eval.exam.course.name,
+            eval.exam.description,
+            eval.ev_date.strftime("%d/%m/%Y"),
+            eval.model.description,
+            eval.prompt,
+            str(eval.grade).replace('.', ','),
+            str(round(eval.time, 2)).replace('.', ',')
         ])
     
     return response
 
 @login_required
 def export_course_evaluations(request, course_id):
-    # Verificar curso
+    # Verify course
     course = get_object_or_404(Course, id=course_id, user=request.user)
     
-    # Configurar respuesta
+    # Set response
     response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
-    response['Content-Disposition'] = f'attachment; filename="evaluaciones_{course.name}.csv"'
+    response['Content-Disposition'] = f'attachment; filename="evaluations_{course.name}.csv"'
     
-    # Crear writer
+    # Create writer
     writer = csv.writer(response, delimiter=',', quoting=csv.QUOTE_ALL)
     
-    # Encabezado
+    # Write header
     writer.writerow([
-        'Examen', 
-        'Fecha', 
-        'Modelo', 
+        'Exam', 
+        'Date', 
+        'Model', 
         'Prompt', 
-        'Nota', 
-        'Tiempo (s)'
+        'Grade', 
+        'Time (s)'
     ])
     
-    # Obtener datos
+    # Get evaluations
     evaluations = Evaluation.objects.filter(
         exam__course=course
     ).select_related('exam', 'model')
     
-    # Escribir filas
+    # Write rows
     for eval in evaluations:
         writer.writerow([
             eval.exam.description,
