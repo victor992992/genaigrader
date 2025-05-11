@@ -117,3 +117,28 @@ $(document).ready(function () {
       });
   });
 });
+
+// --- Eval count indicator logic ---
+function updateEvalCountIndicator() {
+  const exams = document.getElementById('exams');
+  const models = document.getElementById('models');
+  const reps = document.getElementById('repetitions');
+  const nExams = exams ? Array.from(exams.selectedOptions).length : 0;
+  const nModels = models ? Array.from(models.selectedOptions).length : 0;
+  const nReps = reps ? parseInt(reps.value) : 0;
+  let total = nExams * nModels * nReps;
+  let msg = '';
+  if (nExams && nModels && nReps) {
+    msg = `Total evaluations to run: <b>${total}</b> (${nExams} exam${nExams>1?'s':''} × ${nModels} model${nModels>1?'s':''} × ${nReps} repetition${nReps>1?'s':''})`;
+  } else {
+    msg = 'Select at least one exam, one model, and set repetitions.';
+  }
+  document.getElementById('eval-count-indicator').innerHTML = msg;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  updateEvalCountIndicator();
+  document.getElementById('exams').addEventListener('change', updateEvalCountIndicator);
+  document.getElementById('models').addEventListener('change', updateEvalCountIndicator);
+  document.getElementById('repetitions').addEventListener('input', updateEvalCountIndicator);
+});

@@ -26,15 +26,16 @@
         <label for="repetitions" class="batch-eval-label">Repetitions per evaluation:</label>
         <input type="number" name="repetitions" id="repetitions" min="1" value="1" required>
     </div>
+    <div id="eval-count-indicator" class="batch-eval-count-indicator"></div>
     <button type="submit" class="batch-eval-btn">Launch Batch Evaluations</button>
 </form>
 
 <!-- Progress and results UI -->
-<div id="loading-indicator" style="display: none; text-align: center;">
+<div id="loading-indicator" class="batch-eval-loading-indicator">
     <div class="loading-spinner"></div>
     <p>Processing... 🔄</p>
-    <div style="width: 100%; background-color: #eee; border-radius: 12px; margin-top: 1rem;">
-      <div id="progress-bar" style="width: 0%; height: 24px; background-color: #4caf50; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: center; transition: width 0.5s ease;">
+    <div class="batch-eval-progress-bar-container">
+      <div id="progress-bar" class="batch-eval-progress-bar">
         0%
       </div>
     </div>
