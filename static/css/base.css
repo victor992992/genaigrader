@@ -102,6 +102,7 @@ body {
 .boton[href*="course"],
 .boton[href*="reevaluate"],
 .boton[href*="analysis"],
+.boton[href*="batch-evaluations"],
 .boton[href*="api"] {
   background: transparent;
   color: var(--text-color);
@@ -113,6 +114,7 @@ body {
 .boton[href*="course"]:hover,
 .boton[href*="reevaluate"]:hover,
 .boton[href*="analysis"]:hover,
+.boton[href*="batch-evaluations"],
 .boton[href*="api"]:hover {
   background: var(--primary-color);
   color: var(--text-color);

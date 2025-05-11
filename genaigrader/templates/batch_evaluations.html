@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h2>Batch Evaluations</h2>
+<form id="batch-eval-form" method="post">
+    {% csrf_token %}
+    <div>
+        <label for="exams">Select Exams:</label><br>
+        <select name="exams[]" id="exams" multiple size="8">
+            {% for exam in exams %}
+                <option value="{{ exam.id }}">{{ exam }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label for="models">Select Models:</label><br>
+        <select name="models[]" id="models" multiple size="8">
+            {% for model in models %}
+                <option value="{{ model.id }}">{{ model }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label for="repetitions">Repetitions per evaluation:</label>
+        <input type="number" name="repetitions" id="repetitions" min="1" value="1" required>
+    </div>
+    <button type="submit">Launch Batch Evaluations</button>
+</form>
+
+<!-- Progress and results UI -->
+<div id="loading-indicator" style="display: none; text-align: center;">
+    <div class="loading-spinner"></div>
+    <p>Processing... 🔄</p>
+    <div style="width: 100%; background-color: #eee; border-radius: 12px; margin-top: 1rem;">
+      <div id="progress-bar" style="width: 0%; height: 24px; background-color: #4caf50; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: center; transition: width 0.5s ease;">
+        0%
+      </div>
+    </div>
+</div>
+<div id="batch-eval-results"></div>
+<div id="batch-eval-details"></div>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="{% static 'js/batch_evaluations.js' %}"></script>
+{% endblock %}
