@@ -206,3 +206,30 @@ input, textarea, select {
   cursor: pointer;
   transition: background 0.2s;
 }
+.batch-eval-count-indicator {
+  margin-bottom: 1.2rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  font-size: 1.08em;
+}
+.batch-eval-loading-indicator {
+  display: none;
+  text-align: center;
+}
+.batch-eval-progress-bar-container {
+  width: 100%;
+  background-color: #eee;
+  border-radius: 12px;
+  margin-top: 1rem;
+}
+.batch-eval-progress-bar {
+  width: 0%;
+  height: 24px;
+  background-color: #4caf50;
+  border-radius: 10px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.5s ease;
+}
