@@ -4,7 +4,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import patch
 from genaigrader.models import Course, Exam, Question
 from genaigrader.services.exam_service import process_exam_file
-from genaigrader.views.exam_views import upload_file
+from genaigrader.views.evaluate_views import upload_file
 from django.test.client import RequestFactory
 from django.contrib.auth.models import User
 
@@ -71,7 +71,7 @@ class UploadFileTestCase(TestCase):
         request.user = self.user
         return request
 
-    @patch("chat.views.exam_views.process_exam_file")
+    @patch("chat.views.evaluate_views.process_exam_file")
     def test_upload_file_error_does_not_modify_database(self, mock_process_exam_file):
         """This test case checks the behavior when an error occurs during file processing.
         It should not create any exam or questions."""

@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views  
 from genaigrader.views.auth_views import signup  
-from genaigrader.views.init import upload_file, exam_view, course_view
+from genaigrader.views.init import upload_file, evaluate_view, course_view
 from genaigrader.views.course_views import update_course, delete_course, delete_exam, update_exam, export_all_evaluations, export_course_evaluations
 from genaigrader.views.reevaluate_views import reevaluate_view, reevaluate_exam
 from genaigrader.views.exam_details_view import exam_detail, delete_evaluation
@@ -34,7 +34,7 @@ urlpatterns = [
     path('accounts/signup/', signup, name='signup'),
     
  
-    path('exam/', exam_view, name='exam'),
+    path('evaluate/', evaluate_view, name='evaluate'),
     path('course/', course_view, name='course'),
     path('upload/', upload_file, name='upload_file'),
     path('reevaluate/', reevaluate_view, name='reevaluate'),
