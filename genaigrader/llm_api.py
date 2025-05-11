@@ -64,6 +64,56 @@ class LlmApi:
         if errors:
             raise ValueError("\n".join([f"Model error: {e}" for e in errors]))
 
+    def _strip_think_tags(self, text):
+        """
+        Removes all <think>...</think> blocks from the text.
+        """
+        import re
+        return re.sub(r'<think>[\s\S]*?</think>', '', text)
+
+    def _yield_thinking_aware(self, stream, get_content):
+        """
+        If the first chunk starts with <think>, buffer until </think> and yield only what comes after (ignoring blank lines).
+        Otherwise, yield all content as it arrives (ignoring blank lines).
+        """
+        buffer = ""
+        first_chunk = True
+        buffering = False
+        for chunk in stream:
+            content = get_content(chunk)
+            if not content:
+                continue
+            if first_chunk:
+                first_chunk = False
+                if content.lstrip().startswith('<think>'):
+                    buffering = True
+                    buffer += content
+                    continue  # Don't yield yet
+                else:
+                    # Only yield non-blank lines
+                    for line in content.splitlines():
+                        if line.strip():
+                            yield line
+                    continue
+            if buffering:
+                buffer += content
+                end_tag = buffer.find('</think>')
+                if end_tag == -1:
+                    # Still inside <think> block
+                    continue
+                # Found </think>, yield only what comes after
+                after = buffer[end_tag + len('</think>'):]
+                for line in after.splitlines():
+                    if line.strip():
+                        yield line
+                buffering = False
+                buffer = ""
+            else:
+                # Only yield non-blank lines
+                for line in content.splitlines():
+                    if line.strip():
+                        yield line
+
     def _use_external_model(self, prompt):
         """
         Calls an external (OpenAI-compatible) API to generate a response to the prompt.
@@ -83,11 +133,7 @@ class LlmApi:
             messages=[{"role": "user", "content": prompt}],
             stream=True,
         )
-
-        for chunk in response:
-            content = chunk.choices[0].delta.content if chunk.choices and chunk.choices[0].delta else None
-            if content:
-                yield content
+        yield from self._yield_thinking_aware(response, lambda chunk: chunk.choices[0].delta.content if chunk.choices and chunk.choices[0].delta else None)
 
     def _use_local_model(self, prompt):
         """
@@ -107,9 +153,7 @@ class LlmApi:
             messages=[{"role": "user", "content": prompt}],
             stream=True,
         )
-
-        for chunk in response_stream:
-            yield chunk['message']['content']
+        yield from self._yield_thinking_aware(response_stream, lambda chunk: chunk['message']['content'])
 
     def generate_response(self, prompt):
         """
