@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from chat.models import Course, Exam
+from genaigrader.models import Course, Exam
 from django.http import JsonResponse, QueryDict
 from django.views.decorators.http import require_http_methods
-from chat.services.course_service import create_new_course
+from genaigrader.services.course_service import create_new_course
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 import csv
-from chat.models import Evaluation, Course
+from genaigrader.models import Evaluation, Course
 from django.shortcuts import get_object_or_404
 
 @login_required

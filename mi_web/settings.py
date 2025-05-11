@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'chat',
+    'genaigrader',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +59,7 @@ ROOT_URLCONF = 'mi_web.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'chat/templates'],
+        'DIRS': [BASE_DIR / 'genaigrader/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -129,5 +129,5 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'chat'  # Redirige aquí tras iniciar sesión
+LOGIN_REDIRECT_URL = 'genaigrader'  # Redirige aquí tras iniciar sesión
 LOGOUT_REDIRECT_URL = 'login'  # Redirige aquí tras cerrar sesión

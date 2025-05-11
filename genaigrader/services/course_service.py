@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from chat.models import Course
+from genaigrader.models import Course
 
 def get_or_create_course(request):
     """Gestiona la creación o selección de una asignatura"""

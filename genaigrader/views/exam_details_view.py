@@ -1,9 +1,9 @@
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from chat.models import Exam, Evaluation
+from genaigrader.models import Exam, Evaluation
 from django.views.decorators.http import require_http_methods
-from chat.services.graphics_service import process_evaluations_for_graphics, compute_model_statistics
+from genaigrader.services.graphics_service import process_evaluations_for_graphics, compute_model_statistics
 
 @login_required
 def exam_detail(request, exam_id):

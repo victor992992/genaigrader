@@ -1,12 +1,12 @@
 from django.http import StreamingHttpResponse, HttpResponse
 from django.db import transaction
-from chat.models import Question, QuestionOption
-from chat.services.file_service import save_uploaded_file
-from chat.services.exam_service import process_exam_file, create_exam
-from chat.services.course_service import get_or_create_course
-from chat.services.model_service import get_or_create_model
-from chat.services.stream_service import stream_responses
-from chat.llm_api import LlmApi
+from genaigrader.models import Question, QuestionOption
+from genaigrader.services.file_service import save_uploaded_file
+from genaigrader.services.exam_service import process_exam_file, create_exam
+from genaigrader.services.course_service import get_or_create_course
+from genaigrader.services.model_service import get_or_create_model
+from genaigrader.services.stream_service import stream_responses
+from genaigrader.llm_api import LlmApi
 
 
 def validate_model(request):

@@ -2,9 +2,9 @@ from django.test import TestCase
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import patch
-from chat.models import Course, Exam, Question
-from chat.services.exam_service import process_exam_file
-from chat.views.exam_views import upload_file
+from genaigrader.models import Course, Exam, Question
+from genaigrader.services.exam_service import process_exam_file
+from genaigrader.views.exam_views import upload_file
 from django.test.client import RequestFactory
 from django.contrib.auth.models import User
 

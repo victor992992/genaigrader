@@ -1,5 +1,5 @@
 from collections import defaultdict
-from chat.services.confidence_service import compute_averages
+from genaigrader.services.confidence_service import compute_averages
 
 def process_evaluations_for_graphics(evaluations):
     model_values = defaultdict(lambda: {'grades': [], 'times': []})

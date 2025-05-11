@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from chat.models import Course, Evaluation
+from genaigrader.models import Course, Evaluation
 from collections import defaultdict
-from chat.services.confidence_service import compute_averages
+from genaigrader.services.confidence_service import compute_averages
 
 @login_required
 def analysis_view(request):

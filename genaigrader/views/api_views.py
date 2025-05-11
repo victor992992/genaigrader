@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse, QueryDict
-from chat.models import Model
+from genaigrader.models import Model
 
 def api_view(request):
     external_models = Model.objects.filter(api_url__isnull=False, api_key__isnull=False)

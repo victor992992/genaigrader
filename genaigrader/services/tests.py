@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from chat.services.confidence_service import confidence_interval
+from genaigrader.services.confidence_service import confidence_interval
 
 class ConfidenceServiceTest(TestCase):
     def test_averages_two_values(self):

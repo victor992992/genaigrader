@@ -17,13 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views  
-from chat.views.auth_views import signup  
-from chat.views.init import upload_file, exam_view, course_view
-from chat.views.course_views import update_course, delete_course, delete_exam, update_exam, export_all_evaluations, export_course_evaluations
-from chat.views.reevaluate_views import reevaluate_view, reevaluate_exam
-from chat.views.exam_details_view import exam_detail, delete_evaluation
-from chat.views.analysis_view import analysis_view
-from chat.views.api_views import api_view, update_model, delete_model, create_model
+from genaigrader.views.auth_views import signup  
+from genaigrader.views.init import upload_file, exam_view, course_view
+from genaigrader.views.course_views import update_course, delete_course, delete_exam, update_exam, export_all_evaluations, export_course_evaluations
+from genaigrader.views.reevaluate_views import reevaluate_view, reevaluate_exam
+from genaigrader.views.exam_details_view import exam_detail, delete_evaluation
+from genaigrader.views.analysis_view import analysis_view
+from genaigrader.views.api_views import api_view, update_model, delete_model, create_model
 
 urlpatterns = [
     path('admin/', admin.site.urls),

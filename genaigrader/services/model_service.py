@@ -1,4 +1,4 @@
-from chat.models import Model
+from genaigrader.models import Model
 
 def get_or_create_model(request):
     model=request.POST.get("model", "llama3.2:1b")

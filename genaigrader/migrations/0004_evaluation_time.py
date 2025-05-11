@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('chat', '0003_rename_username_course_user'),
+        ('genaigrader', '0003_rename_username_course_user'),
     ]
 
     operations = [

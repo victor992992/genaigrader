@@ -1,4 +1,4 @@
-from chat.llm_api import generate_response
+from genaigrader.llm_api import generate_response
 from ..models import Question
 
 def query_llm(question,model):

@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
-from chat.models import Course
+from genaigrader.models import Course
 from unittest.mock import patch, MagicMock
 from io import BytesIO
 
@@ -35,13 +35,13 @@ class UploadFileViewTest(TestCase):
         self.user = User.objects.create_user(username='testuser', password='12345')
         self.client.force_login(self.user)
 
-    @patch("chat.services.course_service.get_or_create_course")
-    @patch("chat.services.exam_service.create_exam")
-    @patch("chat.services.model_service.get_or_create_model")
-    @patch("chat.services.file_service.save_uploaded_file")
-    @patch("chat.services.exam_service.process_exam_file")
-    @patch("chat.llm_api.LlmApi")
-    @patch("chat.services.stream_service.stream_responses")
+    @patch("genaigrader.services.course_service.get_or_create_course")
+    @patch("genaigrader.services.exam_service.create_exam")
+    @patch("genaigrader.services.model_service.get_or_create_model")
+    @patch("genaigrader.services.file_service.save_uploaded_file")
+    @patch("genaigrader.services.exam_service.process_exam_file")
+    @patch("genaigrader.llm_api.LlmApi")
+    @patch("genaigrader.services.stream_service.stream_responses")
     def test_upload_file_success(
         self, mock_stream, mock_llm_class, mock_process, mock_save_file,
         mock_get_model, mock_create_exam, mock_get_course
@@ -70,7 +70,7 @@ class UploadFileViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get("Content-Type"), "text/event-stream")
 
-from chat.services.confidence_service import confidence_interval
+from genaigrader.services.confidence_service import confidence_interval
 
 class ConfidenceServiceTest(TestCase):
     def test_averages_two_values(self):

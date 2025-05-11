@@ -1,5 +1,5 @@
-from chat.models import Evaluation, QuestionEvaluation
-from chat.services.evaluation_service import generate_prompt
+from genaigrader.models import Evaluation, QuestionEvaluation
+from genaigrader.services.evaluation_service import generate_prompt
 from django.utils import timezone
 import json
 import time

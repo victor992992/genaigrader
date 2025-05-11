@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False)),
                 ('description', models.CharField(max_length=255)),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='chat.course')),
+                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='genaigrader.course')),
                 ('creator_username', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
@@ -44,8 +44,8 @@ class Migration(migrations.Migration):
                 ('prompt', models.TextField()),
                 ('ev_date', models.DateField()),
                 ('grade', models.FloatField()),
-                ('exam', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='chat.exam')),
-                ('model', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='chat.model')),
+                ('exam', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='genaigrader.exam')),
+                ('model', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='genaigrader.model')),
             ],
         ),
         migrations.CreateModel(
@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False)),
                 ('statement', models.TextField()),
-                ('exam', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='chat.exam')),
+                ('exam', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='genaigrader.exam')),
             ],
         ),
         migrations.CreateModel(
@@ -61,21 +61,21 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False)),
                 ('content', models.CharField(max_length=255)),
-                ('question', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='chat.question')),
+                ('question', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='genaigrader.question')),
             ],
         ),
         migrations.CreateModel(
             name='QuestionEvaluation',
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('evaluation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='chat.evaluation')),
-                ('question', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='chat.question')),
-                ('question_option', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='chat.questionoption')),
+                ('evaluation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='genaigrader.evaluation')),
+                ('question', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='genaigrader.question')),
+                ('question_option', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='genaigrader.questionoption')),
             ],
         ),
         migrations.AddField(
             model_name='question',
             name='correct_option',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='correct_option_for', to='chat.questionoption'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='correct_option_for', to='genaigrader.questionoption'),
         ),
     ]

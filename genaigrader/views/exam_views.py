@@ -1,9 +1,9 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from chat.models import Course, Model
-from chat.services.exam_service import process_exam_file #TODO no se puede quitar no se por que
-from chat.services.upload_file_service import handle_file_upload
+from genaigrader.models import Course, Model
+from genaigrader.services.exam_service import process_exam_file #TODO no se puede quitar no se por que
+from genaigrader.services.upload_file_service import handle_file_upload
 
 @login_required
 def exam_view(request):

@@ -3,9 +3,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 import json
-from chat.models import Exam, Model, Question
-from chat.services.stream_service import stream_responses
-from chat.llm_api import LlmApi
+from genaigrader.models import Exam, Model, Question
+from genaigrader.services.stream_service import stream_responses
+from genaigrader.llm_api import LlmApi
 
 @login_required
 def reevaluate_view(request):
