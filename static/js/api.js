@@ -187,4 +187,39 @@ document.addEventListener("DOMContentLoaded", () => {
             : row.originalContent.key;
         cells[3].innerHTML = row.originalContent.html;
     }
+
+    document.getElementById('download-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const modelName = document.getElementById('model-name').value;
+        const messageBox = document.getElementById('message');
+
+        fetch('/model/pull/', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'), // Usar getCookie existente
+            },
+            body: JSON.stringify({ model: modelName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            messageBox.style.display = 'block';
+            if (data.status === 'success') {
+            messageBox.textContent = data.message;
+            messageBox.className = 'message success';
+            // Actualizar la tabla si es necesario
+            location.reload();
+            } else {
+            messageBox.textContent = data.message;
+            messageBox.className = 'message error';
+            }
+    })
+    .catch(error => {
+        messageBox.style.display = 'block';
+        messageBox.textContent = 'Error al conectar con el servidor.';
+        messageBox.className = 'message error';
+    });
+    });
+
 });

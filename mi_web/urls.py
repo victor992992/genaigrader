@@ -23,7 +23,7 @@ from genaigrader.views.course_views import update_course, delete_course, delete_
 from genaigrader.views.reevaluate_views import reevaluate_view, reevaluate_exam
 from genaigrader.views.exam_details_view import exam_detail, delete_evaluation
 from genaigrader.views.analysis_view import analysis_view
-from genaigrader.views.api_views import api_view, update_model, delete_model, create_model
+from genaigrader.views.api_views import api_view, update_model, delete_model, create_model, pull_model
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -54,4 +54,5 @@ urlpatterns = [
     path('model/delete/<int:model_id>/', delete_model, name='delete_model'),
     path('model/create/', create_model, name='create_model'),
 
+    path('model/pull/', pull_model, name='pull_model'),
 ]

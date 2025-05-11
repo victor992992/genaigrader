@@ -48,6 +48,16 @@
           </tr>
           {% endfor %}
       </tbody>
+   <div class="container">
+    <h2>Descargar Modelo de Ollama</h2>
+    <form id="download-form">
+      <label for="model-name">Nombre del Modelo:</label>
+      <input type="text" id="model-name" name="model" required placeholder="ej. llama3:8b">
+      <button type="submit">Descargar</button>
+    </form>
+    <div id="message" class="message" style="display: none;"></div>
+  </div>
+
   </table>
 {% endblock %}
 
