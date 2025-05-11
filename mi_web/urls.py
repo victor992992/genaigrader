@@ -21,6 +21,7 @@ from genaigrader.views.auth_views import signup
 from genaigrader.views.init import upload_file, evaluate_view, course_view
 from genaigrader.views.course_views import update_course, delete_course, delete_exam, update_exam, export_all_evaluations, export_course_evaluations
 from genaigrader.views.reevaluate_views import reevaluate_view, reevaluate_exam
+from genaigrader.views.batch_evaluations_view import batch_evaluations_view
 from genaigrader.views.exam_details_view import exam_detail, delete_evaluation
 from genaigrader.views.analysis_view import analysis_view
 from genaigrader.views.api_views import api_view, update_model, delete_model, create_model, pull_model
@@ -42,6 +43,7 @@ urlpatterns = [
     path('exam/<int:exam_id>/', exam_detail, name='exam_detail'),
     path('analysis/', analysis_view, name='analysis'),
     path('api/', api_view, name='api'),
+    path('batch-evaluations/', batch_evaluations_view, name='batch_evaluations'),
 
     path('export/all/', export_all_evaluations, name='export_all_evaluations'),
     path('export/course/<int:course_id>/', export_course_evaluations, name='export_course_evaluations'),
