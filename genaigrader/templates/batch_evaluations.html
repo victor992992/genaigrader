@@ -4,27 +4,29 @@
 <h2>Batch Evaluations</h2>
 <form id="batch-eval-form" method="post">
     {% csrf_token %}
-    <div>
-        <label for="exams">Select Exams:</label><br>
-        <select name="exams[]" id="exams" multiple size="8">
-            {% for exam in exams %}
-                <option value="{{ exam.id }}">{{ exam }}</option>
-            {% endfor %}
-        </select>
+    <div class="batch-eval-flex">
+        <div class="batch-eval-col">
+            <label for="exams" class="batch-eval-label">Select Exams:</label><br>
+            <select name="exams[]" id="exams" multiple size="8" class="batch-eval-select">
+                {% for exam in exams %}
+                    <option value="{{ exam.id }}">{{ exam }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="batch-eval-col">
+            <label for="models" class="batch-eval-label">Select Models:</label><br>
+            <select name="models[]" id="models" multiple size="8" class="batch-eval-select">
+                {% for model in models %}
+                    <option value="{{ model.id }}">{{ model }}</option>
+                {% endfor %}
+            </select>
+        </div>
     </div>
-    <div>
-        <label for="models">Select Models:</label><br>
-        <select name="models[]" id="models" multiple size="8">
-            {% for model in models %}
-                <option value="{{ model.id }}">{{ model }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div>
-        <label for="repetitions">Repetitions per evaluation:</label>
+    <div class="batch-eval-reps">
+        <label for="repetitions" class="batch-eval-label">Repetitions per evaluation:</label>
         <input type="number" name="repetitions" id="repetitions" min="1" value="1" required>
     </div>
-    <button type="submit">Launch Batch Evaluations</button>
+    <button type="submit" class="batch-eval-btn">Launch Batch Evaluations</button>
 </form>
 
 <!-- Progress and results UI -->
