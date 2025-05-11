@@ -164,3 +164,45 @@ input, textarea, select {
   padding: 0.5rem;
   border-radius: 4px;
 }
+
+.batch-eval-flex {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+.batch-eval-col {
+  flex: 1 1 300px;
+  min-width: 250px;
+}
+.batch-eval-label {
+  font-weight: 600;
+}
+.batch-eval-select {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--background-medium);
+}
+.batch-eval-reps {
+  margin-bottom: 1.5rem;
+}
+.batch-eval-reps input[type="number"] {
+  width: 80px;
+  padding: 0.4rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  margin-left: 0.5rem;
+}
+.batch-eval-btn {
+  padding: 0.7rem 2rem;
+  border-radius: 8px;
+  background: var(--primary-color);
+  color: var(--text-color);
+  font-weight: 600;
+  border: none;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
