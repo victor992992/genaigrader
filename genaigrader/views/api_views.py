@@ -69,22 +69,22 @@ def pull_model(request):
             model_name = data.get('model', '').strip()
 
             if not model_name:
-                return JsonResponse({'status': 'error', 'message': 'El nombre del modelo no puede estar vacío.'}, status=400)
+                return JsonResponse({'status': 'error', 'message': 'Model name cannot be empty.'}, status=400)
 
             ollama_url = f"{OLLAMA_BASE_URL}/api/pull"
             
-            # Realizar la solicitud a Ollama con streaming
+            # Make the request to Ollama with streaming
             response = requests.post(
                 ollama_url,
                 json={'name': model_name},
                 stream=True
             )
 
-            # Manejar errores de conexión con Ollama
+            # Handle connection errors with Ollama
             if response.status_code != 200:
                 return JsonResponse({
                     'status': 'error',
-                    'message': f'Error en Ollama: {response.text}'
+                    'message': f'Ollama error: {response.text}'
                 }, status=400)
 
             def stream_generator():
@@ -96,14 +96,14 @@ def pull_model(request):
                         try:
                             ollama_chunk = json.loads(line)
                             
-                            # Enviar progreso al cliente
+                            # Send progress to client
                             if 'status' in ollama_chunk:
                                 yield json.dumps({
                                     'status': 'progress',
-                                    'message': f'Descargando: {ollama_chunk["status"]}'
+                                    'message': f'Downloading: {ollama_chunk["status"]}'
                                 }) + "\n"
                                 
-                            # Detectar errores
+                            # Detect errors
                             if 'error' in ollama_chunk:
                                 yield json.dumps({
                                     'status': 'error',
@@ -112,19 +112,19 @@ def pull_model(request):
                                 error_occurred = True
                                 break
                                 
-                            # Detectar finalización exitosa
+                            # Detect successful completion
                             if ollama_chunk.get('status') == 'success':
                                 download_complete = True
                                 
                         except json.JSONDecodeError:
                             yield json.dumps({
                                 'status': 'error',
-                                'message': 'Error leyendo respuesta de Ollama'
+                                'message': 'Error reading Ollama response'
                             }) + "\n"
                             error_occurred = True
                             break
 
-                # Crear modelo solo si la descarga fue exitosa
+                # Create model only if download was successful
                 if download_complete and not error_occurred:
                     try:
                         new_model = Model.objects.create(
@@ -132,13 +132,13 @@ def pull_model(request):
                         )
                         yield json.dumps({
                             'status': 'success',
-                            'message': f'Modelo {model_name} descargado correctamente!',
+                            'message': f'Model {model_name} downloaded successfully!',
                             'model_id': new_model.id
                         }) + "\n"
                     except Exception as e:
                         yield json.dumps({
                             'status': 'error',
-                            'message': f'Error creando modelo: {str(e)}'
+                            'message': f'Error creating model: {str(e)}'
                         }) + "\n"
 
             return StreamingHttpResponse(stream_generator(), content_type='application/json')
@@ -146,12 +146,12 @@ def pull_model(request):
         except requests.exceptions.ConnectionError:
             return JsonResponse({
                 'status': 'error',
-                'message': 'No se pudo conectar a Ollama. ¿Está ejecutándose?'
+                'message': 'Could not connect to Ollama. Is it running?'
             }, status=500)
         except Exception as e:
             return JsonResponse({
                 'status': 'error',
-                'message': f'Error inesperado: {str(e)}'
+                'message': f'Unexpected error: {str(e)}'
             }, status=500)
 
-    return JsonResponse({'status': 'error', 'message': 'Método no permitido'}, status=405)
+    return JsonResponse({'status': 'error', 'message': 'Method not allowed'}, status=405)

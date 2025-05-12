@@ -39,7 +39,6 @@ h2::before {
   border-radius: 3px;
 }
 
-
 .download-container {
   background: var(--background-medium);
   border: 1px solid var(--border-color);

@@ -8,15 +8,15 @@ document.addEventListener("DOMContentLoaded", () => {
         return null;
     };
 
-    // Mostrar formulario
+    // Show form
     document.getElementById('show-form').addEventListener('click', () => {
         document.getElementById('creation-form').style.display = 'block';
     });
 
-    // Crear nuevo modelo
+    // Create new model
     document.getElementById('create-btn').addEventListener('click', createModel);
 
-    // Manejador principal para la tabla
+    // Main table handler
     document.getElementById('model-table').addEventListener('click', async (e) => {
         const target = e.target;
         const row = target.closest('tr');
@@ -24,9 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const modelId = row.dataset.id;
 
-        // Eliminar
+        // Delete
         if (target.classList.contains('delete-btn')) {
-            if (confirm('¿Borrar este modelo?')) {
+            if (confirm('Delete this model?')) {
                 try {
                     const response = await fetch(`/model/delete/${modelId}/`, {
                         method: 'DELETE',
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         row.remove();
                     } else {
                         const data = await response.json();
-                        throw new Error(data.message || 'Error al borrar');
+                        throw new Error(data.message || 'Delete error');
                     }
                 } catch(error) {
                     alert(error.message);
@@ -47,30 +47,30 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
         
-        // Editar
+        // Edit
         if (target.classList.contains('edit-btn')) {
             enterEditMode(row);
         }
         
-        // Guardar cambios
+        // Save changes
         if (target.classList.contains('save-btn')) {
             await saveChanges(row, modelId);
         }
         
-        // Cancelar edición
+        // Cancel edit
         if (target.classList.contains('cancel-btn')) {
             cancelEdit(row);
         }
     });
 
-    // Función para crear modelo
+    // Create model function
     async function createModel() {
         const desc = document.getElementById('desc').value.trim();
         const url = document.getElementById('url').value.trim();
         const key = document.getElementById('key').value.trim();
 
         if (!desc || !url || !key) {
-            alert('Todos los campos son obligatorios');
+            alert('All fields are required');
             return;
         }
 
@@ -89,13 +89,13 @@ document.addEventListener("DOMContentLoaded", () => {
             if (response.ok) {
                         const newRow = `
                         <tr data-id="${data.model.id}">
-                            <td>Externo</td>
+                            <td>External</td>
                             <td data-full-value="${data.model.description}">${data.model.description}</td>
                             <td data-full-value="${data.model.api_url}">${data.model.api_url}</td>
                             <td data-full-value="${data.model.api_key}">${data.model.api_key.length > 10 ? data.model.api_key.substring(0,7) + '...' : data.model.api_key}</td>
                             <td>
-                                <button class="edit-btn">Editar</button>
-                                <button class="delete-btn">Borrar</button>
+                                <button class="edit-btn">Edit</button>
+                                <button class="delete-btn">Delete</button>
                             </td>
                         </tr>
                     `;
@@ -106,15 +106,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById('url').value = '';
                 document.getElementById('key').value = '';
             } else {
-                throw new Error(data.message || 'Error del servidor');
+                throw new Error(data.message || 'Server error');
             }
         } catch(error) {
             console.error('Error:', error);
-            alert('Error al crear modelo: ' + error.message);
+            alert('Error creating model: ' + error.message);
         }
     }
 
-    // Modo edición
+    // Edit mode
     function enterEditMode(row) {
         const cells = row.querySelectorAll('td');
         const [descCell, urlCell, keyCell, actionsCell] = cells;
@@ -131,12 +131,12 @@ document.addEventListener("DOMContentLoaded", () => {
         keyCell.innerHTML = `<input type="text" value="${row.originalContent.key}" class="edit-input">`;
 
         actionsCell.innerHTML = `
-            <button class="save-btn">Guardar</button>
-            <button class="cancel-btn">Cancelar</button>
+            <button class="save-btn">Save</button>
+            <button class="cancel-btn">Cancel</button>
         `;
     }
 
-    // Guardar cambios
+    // Save changes
     async function saveChanges(row, modelId) {
         const inputs = row.querySelectorAll('.edit-input');
         const newData = {
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 cells[3].innerHTML = row.originalContent.html;
             } else {
                 const data = await response.json();
-                throw new Error(data.message || 'Error al guardar');
+                throw new Error(data.message || 'Save error');
             }
         } catch(error) {
             alert(error.message);
@@ -178,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Cancelar edición
+    // Cancel edit
     function cancelEdit(row) {
         const cells = row.querySelectorAll('td');
         cells[0].textContent = row.originalContent.description;
@@ -193,9 +193,9 @@ document.getElementById('download-form').addEventListener('submit', function(e) 
     const modelName = document.getElementById('model-name').value;
     const messageBox = document.getElementById('message');
     
-    // Resetear mensaje
+    // Reset message
     messageBox.style.display = 'block';
-    messageBox.textContent = 'Iniciando descarga...';
+    messageBox.textContent = 'Starting download...';
     messageBox.className = 'message info';
 
     fetch('/model/pull/', {
@@ -214,7 +214,7 @@ document.getElementById('download-form').addEventListener('submit', function(e) 
             return reader.read().then(({ done, value }) => {
                 if (done) return;
                 
-                // Procesar cada chunk
+                // Process each chunk
                 const chunks = decoder.decode(value).split('\n');
                 
                 chunks.forEach(chunk => {
@@ -253,7 +253,7 @@ document.getElementById('download-form').addEventListener('submit', function(e) 
     })
     .catch(error => {
         console.error('Error:', error);
-        messageBox.textContent = 'Error en la conexión';
+        messageBox.textContent = 'Connection error';
         messageBox.className = 'message error';
     });
 });

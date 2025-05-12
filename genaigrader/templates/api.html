@@ -10,23 +10,23 @@
 {% endblock %}
 
 {% block content %}
-  <h2>Añadir Modelo Externo</h2>
+  <h2>Add External Model</h2>
   
-  <button id="show-form">Nuevo Modelo Externo</button>
+  <button id="show-form">New External Model</button>
   
   <div id="creation-form" style="display:none; margin:20px 0;">
-    <input type="text" id="desc" placeholder="Descripción">
+    <input type="text" id="desc" placeholder="Description">
     <input type="url" id="url" placeholder="URL">
     <input type="text" id="key" placeholder="API Key">
-    <button id="create-btn">Crear</button>
+    <button id="create-btn">Create</button>
   </div>
 
   <div class="container">
-    <h2>Descargar Modelo de Ollama</h2>
+    <h2>Download Model from Ollama</h2>
     <form id="download-form">
-      <label for="model-name">Nombre del Modelo:</label>
-      <input type="text" id="model-name" name="model" required placeholder="ej. llama3:8b">
-      <button type="submit">Descargar</button>
+      <label for="model-name">Model Name:</label>
+      <input type="text" id="model-name" name="model" required placeholder="e.g. llama3:8b">
+      <button type="submit">Download</button>
     </form>
     <div id="message" class="message" style="display: none;"></div>
   </div>
@@ -34,15 +34,16 @@
   <table id="model-table">
       <thead>
           <tr>
-              <th>Descripción</th>
+              <th>Type</th>
+              <th>Description</th>
               <th>URL</th>
               <th>API Key</th>
-              <th>Acciones</th>
+              <th>Actions</th>
           </tr>
       </thead>
       <tbody>
           <tr class="section-header">
-              <td colspan="4"><h3>Modelos Locales</h3></td>
+              <td colspan="5"><h3>Local Models</h3></td>
           </tr>
           {% for model in local_models %}
           <tr data-id="{{ model.id }}">
@@ -50,17 +51,17 @@
               <td>N/A</td>
               <td>N/A</td>
               <td>
-                  <button class="delete-btn">Borrar</button>
+                  <button class="delete-btn">Delete</button>
               </td>
           </tr>
           {% empty %}
           <tr>
-              <td colspan="4">No hay modelos locales</td>
+              <td colspan="5">No local models</td>
           </tr>
           {% endfor %}
           
           <tr class="section-header">
-              <td colspan="4"><h3>Modelos Externos</h3></td>
+              <td colspan="5"><h3>External Models</h3></td>
           </tr>
           {% for model in external_models %}
           <tr data-id="{{ model.id }}">
@@ -68,13 +69,13 @@
               <td data-full-value="{{ model.api_url }}">{{ model.api_url }}</td>
               <td data-full-value="{{ model.api_key }}">{{ model.api_key|truncatechars:10 }}</td>
               <td>
-                  <button class="edit-btn">Editar</button>
-                  <button class="delete-btn">Borrar</button>
+                  <button class="edit-btn">Edit</button>
+                  <button class="delete-btn">Delete</button>
               </td>
           </tr>
           {% empty %}
           <tr>
-              <td colspan="4">No hay modelos externos</td>
+              <td colspan="5">No external models</td>
           </tr>
           {% endfor %}
       </tbody>
