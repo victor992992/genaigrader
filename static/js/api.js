@@ -87,17 +87,18 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
             
             if (response.ok) {
-                const newRow = `
-                    <tr data-id="${data.model.id}">
-                        <td data-full-value="${data.model.description}">${data.model.description}</td>
-                        <td data-full-value="${data.model.api_url}">${data.model.api_url}</td>
-                        <td data-full-value="${data.model.api_key}">${data.model.api_key.substring(0,10)}...</td>
-                        <td>
-                            <button class="edit-btn">Editar</button>
-                            <button class="delete-btn">Borrar</button>
-                        </td>
-                    </tr>
-                `;
+                        const newRow = `
+                        <tr data-id="${data.model.id}">
+                            <td>Externo</td>
+                            <td data-full-value="${data.model.description}">${data.model.description}</td>
+                            <td data-full-value="${data.model.api_url}">${data.model.api_url}</td>
+                            <td data-full-value="${data.model.api_key}">${data.model.api_key.length > 10 ? data.model.api_key.substring(0,7) + '...' : data.model.api_key}</td>
+                            <td>
+                                <button class="edit-btn">Editar</button>
+                                <button class="delete-btn">Borrar</button>
+                            </td>
+                        </tr>
+                    `;
                 document.querySelector('#model-table tbody').insertAdjacentHTML('afterbegin', newRow);
                 
                 document.getElementById('creation-form').style.display = 'none';

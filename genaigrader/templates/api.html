@@ -10,9 +10,9 @@
 {% endblock %}
 
 {% block content %}
-  <h2>Modelos Externos</h2>
+  <h2>Modelos</h2>
   
-  <button id="show-form">Nuevo Modelo</button>
+  <button id="show-form">Nuevo Modelo Externo</button>
   
   <div id="creation-form" style="display:none; margin:20px 0;">
     <input type="text" id="desc" placeholder="Descripción">
@@ -20,7 +20,6 @@
     <input type="text" id="key" placeholder="API Key">
     <button id="create-btn">Crear</button>
   </div>
-
 
   <table id="model-table">
       <thead>
@@ -32,6 +31,27 @@
           </tr>
       </thead>
       <tbody>
+          <tr class="section-header">
+              <td colspan="4"><h3>Modelos Locales</h3></td>
+          </tr>
+          {% for model in local_models %}
+          <tr data-id="{{ model.id }}">
+              <td data-full-value="{{ model.description }}">{{ model.description }}</td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>
+                  <button class="delete-btn">Borrar</button>
+              </td>
+          </tr>
+          {% empty %}
+          <tr>
+              <td colspan="4">No hay modelos locales</td>
+          </tr>
+          {% endfor %}
+          
+          <tr class="section-header">
+              <td colspan="4"><h3>Modelos Externos</h3></td>
+          </tr>
           {% for model in external_models %}
           <tr data-id="{{ model.id }}">
               <td data-full-value="{{ model.description }}">{{ model.description }}</td>
@@ -44,11 +64,13 @@
           </tr>
           {% empty %}
           <tr>
-              <td colspan="4">No hay modelos externos registrados.</td>
+              <td colspan="4">No hay modelos externos</td>
           </tr>
           {% endfor %}
       </tbody>
-   <div class="container">
+  </table>
+
+  <div class="container">
     <h2>Descargar Modelo de Ollama</h2>
     <form id="download-form">
       <label for="model-name">Nombre del Modelo:</label>
@@ -57,8 +79,6 @@
     </form>
     <div id="message" class="message" style="display: none;"></div>
   </div>
-
-  </table>
 {% endblock %}
 
 {% block extra_scripts %}

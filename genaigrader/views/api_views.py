@@ -11,8 +11,12 @@ import requests
 OLLAMA_BASE_URL = "http://localhost:11434"
 
 def api_view(request):
-    external_models = Model.objects.filter(api_url__isnull=False, api_key__isnull=False)
-    return render(request, 'api.html', {'external_models': external_models})
+    local_models = Model.objects.filter(api_url__isnull=True, api_key__isnull=True)
+    external_models = Model.objects.exclude(api_url__isnull=True, api_key__isnull=True)
+    return render(request, 'api.html', {
+        'local_models': local_models,
+        'external_models': external_models
+    })
 
 @require_http_methods(["PUT"])
 def update_model(request, model_id):
