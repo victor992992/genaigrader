@@ -133,7 +133,7 @@ def batch_stream(exams_to_eval: Iterable, models_to_eval: Iterable, repetitions:
             logging.warning(f"Yielding chunk: {chunk[:100]}")
             yield chunk
 
-        summary = extract_summary(responses, len(questions))
+        summary = extract_summary(responses)
         if summary:
             yield f"data: {json.dumps({'eval_result': summary})}\n\n"
 
