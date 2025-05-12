@@ -60,12 +60,20 @@ $(document).ready(function () {
               if (data.error) {
                 $("#batch-eval-results").append(`<div style='color:red;'>${data.error}</div>`);
               } else if (data.progress) {
-                // Split progress message: Eval x/y - ...
-                const match = data.progress.match(/^(Eval (\d+)\/(\d+))( - .*)?$/);
+                // Robustly extract fields from progress message
+                // Format: Eval x/y - Model: ... Subject: ... Exam: ... Repetition: a/b
+                const progressRegex = /^Eval (\d+)\/(\d+) - Model: (.*?) Subject: (.*?) Exam: (.*?) Repetition: (\d+)\/(\d+)$/;
+                const match = data.progress.match(progressRegex);
                 if (match) {
-                  lastEvalMsg = match[1];
-                  lastDetailMsg = match[4] ? match[4].trim() : '';
-                  // Set progress bar text and background color for visibility
+                  lastEvalMsg = `Eval ${match[1]}/${match[2]}`;
+                  lastDetailMsg = `Evaluating ${match[3]} on ${match[4]} with ${match[5]} (${match[6]}/${match[7]})`;
+                  // Save for table row (full values, even with spaces)
+                  window._batchEvalLastRow = {
+                    model: match[3],
+                    subject: match[4],
+                    exam: match[5],
+                    repetition: match[6],
+                  };
                   $("#progress-bar")
                     .css({
                       'text-align': 'center',
@@ -82,10 +90,10 @@ $(document).ready(function () {
                       'min-width': '60px',
                       'min-height': '24px',
                     })
-                    .text(lastEvalMsg || ' ');
+                    .text(lastEvalMsg); // Only show Eval x/y
                   // Update progress bar width based on eval count/total
-                  const currentEval = parseInt(match[2], 10);
-                  const totalEval = parseInt(match[3], 10);
+                  const currentEval = parseInt(match[1], 10);
+                  const totalEval = parseInt(match[2], 10);
                   if (!isNaN(currentEval) && !isNaN(totalEval) && totalEval > 0) {
                     const percent = Math.round((currentEval / totalEval) * 100);
                     $("#progress-bar").css("width", percent + "%");
@@ -99,8 +107,37 @@ $(document).ready(function () {
               } else if (data.processed_questions && data.total_questions) {
                 const percent = Math.round((data.processed_questions / data.total_questions) * 100);
                 $("#progress-bar").css("width", percent + "%");
+              } else if (data.eval_result) {
+                // Show the result of the last eval (grade and time)
+                const grade = data.eval_result.grade;
+                const time = data.eval_result.time;
+                // Find or create a summary area
+                let $summary = $("#batch-eval-summary");
+                if ($summary.length === 0) {
+                  $summary = $("<div id='batch-eval-summary' class='batch-eval-summary'></div>");
+                  $("#batch-eval-results").append($summary);
+                }
+                $summary.html(
+                  `Result: <b>${grade}</b> correct, Time: <b>${time}s</b>`
+                );
+                // Move the summary above the details, but below the progress message
+                $("#batch-eval-summary").insertAfter("#batch-eval-results > div:first-child");
+                // --- Add row to table ---
+                const lastRow = window._batchEvalLastRow || {};
+                $("#batch-eval-table").show();
+                $("#batch-eval-table tbody").append(
+                  `<tr>
+                    <td data-label="Model">${lastRow.model||''}</td>
+                    <td data-label="Subject">${lastRow.subject||''}</td>
+                    <td data-label="Exam">${lastRow.exam||''}</td>
+                    <td data-label="Repetition">${lastRow.repetition||''}</td>
+                    <td data-label="Grade">${grade}</td>
+                    <td data-label="Time">${time}</td>
+                  </tr>`
+                );
               } else if (data.done) {
-                $("#batch-eval-results").append("<div>Batch evaluation finished.</div>");
+                // Do not clear or append, just mark finished
+                $("#batch-eval-results").html("<div>Batch evaluation finished.</div>");
                 $("#loading-indicator").hide();
               }
             } catch (e) {
