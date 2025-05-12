@@ -39,9 +39,36 @@ def batch_stream(exams_to_eval, models_to_eval, repetitions):
                 logging.warning(f"Progress: {progress_msg}")
                 yield f"data: {json.dumps({'progress': progress_msg})}\n\n"
                 user_prompt = ''
-                for chunk in stream_responses(questions, user_prompt, llm, len(questions), exam):
+                # Collect responses and stats
+                responses = list(stream_responses(questions, user_prompt, llm, len(questions), exam))
+                # Try to extract grade and time from the last response if present
+                last_grade = None
+                last_time = None
+                last_correct = None
+                last_total = len(questions)
+                for r in reversed(responses):
+                    try:
+                        data = json.loads(r.replace('data: ', '').strip())
+                        if 'total_time' in data and 'correct_count' in data and 'total_questions' in data:
+                            last_grade = data['correct_count']
+                            last_time = data['total_time']
+                            last_total = data['total_questions']
+                            break
+                    except Exception:
+                        continue
+                # Stream all responses as before
+                for chunk in responses:
                     logging.warning(f"Yielding chunk: {chunk[:100]}")
                     yield chunk
+                # After all responses, send a summary for this eval
+                if last_grade is not None and last_time is not None:
+                    summary = {
+                        'eval_result': {
+                            'grade': f"{last_grade}/{last_total}",
+                            'time': last_time
+                        }
+                    }
+                    yield f"data: {json.dumps(summary)}\n\n"
     yield f"data: {json.dumps({'done': True})}\n\n"
 
 @login_required

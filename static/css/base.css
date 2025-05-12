@@ -233,3 +233,68 @@ input, textarea, select {
   justify-content: center;
   transition: width 0.5s ease;
 }
+
+/* Batch evaluation table styled like API table */
+.batch-eval-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem auto;
+  background: var(--background-medium);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+.batch-eval-table th, 
+.batch-eval-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+.batch-eval-table th {
+  background-color: var(--secondary-color);
+  font-weight: 600;
+}
+.batch-eval-table tbody tr:nth-child(even) {
+  background: var(--background-dark);
+}
+.batch-eval-table tbody tr:hover {
+  background: #1e40af;
+}
+
+@media (max-width: 768px) {
+  .batch-eval-table th, 
+  .batch-eval-table td {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Responsive for small screens */
+@media (max-width: 700px) {
+  .batch-eval-table, .batch-eval-table thead, .batch-eval-table tbody, .batch-eval-table th, .batch-eval-table td, .batch-eval-table tr {
+    display: block;
+  }
+  .batch-eval-table th {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  .batch-eval-table td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+    min-height: 2.2em;
+  }
+  .batch-eval-table td:before {
+    position: absolute;
+    top: 0;
+    left: 0.8em;
+    width: 45%;
+    white-space: nowrap;
+    font-weight: bold;
+    color: #888;
+    content: attr(data-label);
+  }
+}
