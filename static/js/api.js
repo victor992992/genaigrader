@@ -189,37 +189,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.getElementById('download-form').addEventListener('submit', function (e) {
-        e.preventDefault();
+    e.preventDefault();
+    const modelName = document.getElementById('model-name').value;
+    const messageBox = document.getElementById('message');
+    messageBox.style.display = 'none';  // Resetear mensaje
 
-        const modelName = document.getElementById('model-name').value;
-        const messageBox = document.getElementById('message');
-
-        fetch('/model/pull/', {
-            method: 'POST',
-            headers: {
+    fetch('/model/pull/', {
+        method: 'POST',
+        headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken'), // Usar getCookie existente
-            },
-            body: JSON.stringify({ model: modelName })
-        })
-        .then(response => response.json())
-        .then(data => {
-            messageBox.style.display = 'block';
-            if (data.status === 'success') {
-            messageBox.textContent = data.message;
-            messageBox.className = 'message success';
-            // Actualizar la tabla si es necesario
-            location.reload();
-            } else {
-            messageBox.textContent = data.message;
-            messageBox.className = 'message error';
-            }
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: JSON.stringify({ model: modelName })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw err; });
+        }
+        return response.json();
+    })
+    .then(data => {
+        messageBox.style.display = 'block';
+        messageBox.textContent = data.message;
+        messageBox.className = `message ${data.status}`;
+        if (data.status === 'success') {
+            location.reload();  // Recargar solo si fue exitoso
+        }
     })
     .catch(error => {
+        console.error('Error:', error);
         messageBox.style.display = 'block';
-        messageBox.textContent = 'Error al conectar con el servidor.';
+        messageBox.textContent = error.message || 'Error desconocido';
         messageBox.className = 'message error';
     });
-    });
-
+});
 });
