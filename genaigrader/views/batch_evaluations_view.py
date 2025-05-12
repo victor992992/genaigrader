@@ -1,79 +1,155 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from chat.models import Exam, Model, Evaluation
+from genaigrader.models import Exam, Model
 from django.views.decorators.csrf import csrf_exempt
 from django.http import StreamingHttpResponse
 from django.utils import timezone
-from chat.services.stream_service import stream_responses
-from chat.llm_api import LlmApi
+from genaigrader.services.stream_service import stream_responses
+from genaigrader.llm_api import LlmApi
 import logging
 import json
+from typing import Generator, Iterable, List, Dict, Any
 
-def batch_stream(exams_to_eval, models_to_eval, repetitions):
-    total_exams = len(exams_to_eval)
-    total_models = len(models_to_eval)
-    total_reps = repetitions
-    eval_count = 0
-    for exam in exams_to_eval:
-        questions = exam.question_set.prefetch_related('questionoption_set').all()
-        if not questions.exists():
-            logging.warning(f"Exam {exam} has no questions.")
-            yield f"data: {json.dumps({'error': f'Exam {exam} has no questions.'})}\n\n"
+def generate_eval_tasks(exams: Iterable, models: Iterable, repetitions: int) -> Generator:
+    """
+    Generator that yields all combinations of exams, models, and repetitions.
+    Args:
+        exams: Iterable of Exam objects.
+        models: Iterable of Model objects.
+        repetitions: Number of repetitions for each exam-model pair.
+    Yields:
+        Tuple of (exam, model, repetition number)
+    """
+    for exam in exams:
+        for model in models:
+            for rep in range(1, repetitions + 1):
+                yield exam, model, rep
+
+def validate_exam(exam: Exam) -> Iterable:
+    """
+    Validates that the exam has questions.
+    Args:
+        exam: Exam object to validate.
+    Returns:
+        Queryset of questions for the exam.
+    Raises:
+        ValueError: If the exam has no questions.
+    """
+    questions = exam.question_set.prefetch_related('questionoption_set').all()
+    if not questions.exists():
+        raise ValueError(f"Exam {exam} has no questions.")
+    return questions
+
+def validate_model(model: Model) -> 'LlmApi':
+    """
+    Validates the model by initializing and validating an LlmApi instance.
+    Args:
+        model: Model object to validate.
+    Returns:
+        LlmApi instance.
+    Raises:
+        ValueError: If the model is invalid.
+    """
+    llm = LlmApi(model)
+    llm.validate()
+    return llm
+
+def run_evaluation(questions: Iterable, llm: 'LlmApi', exam: Exam) -> List[str]:
+    """
+    Runs evaluation for the given questions, llm, and exam.
+    Args:
+        questions: Iterable of questions.
+        llm: LlmApi instance.
+        exam: Exam object.
+    Returns:
+        List of response strings from the evaluation stream.
+    """
+    return list(stream_responses(questions, '', llm, len(questions), exam))
+
+def extract_summary(responses: List[str]) -> Dict[str, Any] | None:
+    """
+    Extracts summary information from the evaluation responses.
+    Args:
+        responses: List of response strings. Each response is expected to be a JSON string
+            with keys 'correct_count', 'total_time', and 'total_questions'.
+    Returns:
+        Dictionary with grade and time, or None if not found.
+    """
+    for r in reversed(responses):
+        try:
+            data = json.loads(r.replace('data: ', '').strip())
+            if {'correct_count', 'total_time', 'total_questions'}.issubset(data):
+                return {
+                    'grade': f"{data['correct_count']}/{data['total_questions']}",
+                    'time': data['total_time']
+                }
+        except json.JSONDecodeError as e:
+            logging.warning(f"Failed to decode JSON in extract_summary: {e}")
             continue
-        subject_name = exam.course.name if hasattr(exam, 'course') and exam.course else ''
-        exam_name = exam.description
-        for model in models_to_eval:
-            try:
-                llm = LlmApi(model)
-                llm.validate()
-            except ValueError as e:
-                logging.warning(f"Model {model}: {str(e)}")
-                yield f"data: {json.dumps({'error': f'Model {model}: {str(e)}'})}\n\n"
-                continue
-            for rep in range(1, repetitions+1):
-                eval_count += 1
-                progress_msg = (
-                    f"Eval {eval_count}/{total_exams*total_models*total_reps} - "
-                    f"Model: {model.description} Subject: {subject_name} Exam: {exam_name} Repetition: {rep}/{total_reps}"
-                )
-                logging.warning(f"Progress: {progress_msg}")
-                yield f"data: {json.dumps({'progress': progress_msg})}\n\n"
-                user_prompt = ''
-                # Collect responses and stats
-                responses = list(stream_responses(questions, user_prompt, llm, len(questions), exam))
-                # Try to extract grade and time from the last response if present
-                last_grade = None
-                last_time = None
-                last_correct = None
-                last_total = len(questions)
-                for r in reversed(responses):
-                    try:
-                        data = json.loads(r.replace('data: ', '').strip())
-                        if 'total_time' in data and 'correct_count' in data and 'total_questions' in data:
-                            last_grade = data['correct_count']
-                            last_time = data['total_time']
-                            last_total = data['total_questions']
-                            break
-                    except Exception:
-                        continue
-                # Stream all responses as before
-                for chunk in responses:
-                    logging.warning(f"Yielding chunk: {chunk[:100]}")
-                    yield chunk
-                # After all responses, send a summary for this eval
-                if last_grade is not None and last_time is not None:
-                    summary = {
-                        'eval_result': {
-                            'grade': f"{last_grade}/{last_total}",
-                            'time': last_time
-                        }
-                    }
-                    yield f"data: {json.dumps(summary)}\n\n"
+    return None
+
+def batch_stream(exams_to_eval: Iterable, models_to_eval: Iterable, repetitions: int) -> Generator[str, None, None]:
+    """
+    Streams batch evaluation results for all combinations of exams, models, and repetitions.
+    Args:
+        exams_to_eval: Iterable of Exam objects to evaluate.
+        models_to_eval: Iterable of Model objects to evaluate.
+        repetitions: Number of repetitions for each combination.
+    Yields:
+        String chunks for streaming HTTP response.
+    """
+    total_tasks = len(exams_to_eval) * len(models_to_eval) * repetitions
+    eval_count = 0
+
+    for exam, model, rep in generate_eval_tasks(exams_to_eval, models_to_eval, repetitions):
+        try:
+            questions = validate_exam(exam)
+        except ValueError as e:
+            logging.warning(str(e))
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+            continue
+
+        try:
+            llm = validate_model(model)
+        except ValueError as e:
+            error_msg = f"Model {model}: {str(e)}"
+            logging.warning(error_msg)
+            yield f"data: {json.dumps({'error': error_msg})}\n\n"
+            continue
+
+        eval_count += 1
+        subject_name = getattr(exam.course, 'name', '')
+        progress_msg = (
+            f"Eval {eval_count}/{total_tasks} - "
+            f"Model: <b>{model.description}</b> Subject: <b>{subject_name}</b> "
+            f"Exam: <b>{exam.description}</b> Repetition: {rep}/{repetitions}"
+        )
+        logging.warning(f"Progress: {progress_msg}")
+        yield f"data: {json.dumps({'progress': progress_msg})}\n\n"
+
+        responses = run_evaluation(questions, llm, exam)
+
+        for chunk in responses:
+            logging.warning(f"Yielding chunk: {chunk[:100]}")
+            yield chunk
+
+        summary = extract_summary(responses, len(questions))
+        if summary:
+            yield f"data: {json.dumps({'eval_result': summary})}\n\n"
+
     yield f"data: {json.dumps({'done': True})}\n\n"
 
 @login_required
 @csrf_exempt
 def batch_evaluations_view(request):
+    """
+    Django view for handling batch evaluations. Supports GET for rendering the form
+    and POST for streaming evaluation results.
+    Args:
+        request: Django HttpRequest object.
+    Returns:
+        HttpResponse or StreamingHttpResponse.
+    """
     user = request.user
     exams = Exam.objects.filter(creator_username=user)
     models = Model.objects.all()
@@ -85,12 +161,11 @@ def batch_evaluations_view(request):
             selected_exam_ids = data.get('exams[]', [])
             selected_model_ids = data.get('models[]', [])
             repetitions = int(data.get('repetitions', 1))
-            logging.warning('Parsed as JSON')
         else:
             selected_exam_ids = request.POST.getlist('exams[]')
             selected_model_ids = request.POST.getlist('models[]')
             repetitions = int(request.POST.get('repetitions', 1))
-            logging.warning('Parsed as form POST')
+
         logging.warning(f'selected_exam_ids: {selected_exam_ids}, selected_model_ids: {selected_model_ids}, repetitions: {repetitions}')
 
         exams_to_eval = Exam.objects.filter(id__in=selected_exam_ids, creator_username=user)
@@ -102,6 +177,7 @@ def batch_evaluations_view(request):
             content_type="text/event-stream"
         )
 
+    # GET request: render the form
     return render(request, 'batch_evaluations.html', {
         'exams': exams,
         'models': models,
