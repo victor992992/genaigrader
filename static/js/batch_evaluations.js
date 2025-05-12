@@ -8,7 +8,7 @@ $(document).ready(function () {
     $("#loading-indicator").show();
     $("#progress-bar").css("width", "0%").text("0%");
     $("#batch-eval-results").html("");
-    $("#batch-eval-details").html("");
+    $("#exam-details").html("");
 
     // Prepare POST request (not using fetch FormData directly for streaming)
     const data = {};
@@ -39,10 +39,6 @@ $(document).ready(function () {
         const reader = response.body.getReader();
         const decoder = new TextDecoder("utf-8");
         let buffer = '';
-        let lastProgress = 0;
-        let lastExamMsg = '';
-        let lastQuestionMsg = '';
-        let lastProgressMsg = '';
         let lastEvalMsg = '';
         let lastDetailMsg = '';
         function processStream({ done, value }) {
@@ -103,7 +99,14 @@ $(document).ready(function () {
                   $("#progress-bar").text(data.progress);
                 }
               } else if (data.response) {
-                $("#batch-eval-details").append(`<div><b>Q:</b> ${data.response.question_prompt}<br><b>Model:</b> ${data.response.response}</div>`);
+                // Use appendResponseDetails from utils.js for consistent UI
+                const progressLike = {
+                  response: data.response,
+                  time: data.response.time || '',
+                  processed_questions: data.response.processed_questions || '',
+                  total_questions: data.response.total_questions || '',
+                };
+                appendResponseDetails(progressLike);
               } else if (data.processed_questions && data.total_questions) {
                 const percent = Math.round((data.processed_questions / data.total_questions) * 100);
                 $("#progress-bar").css("width", percent + "%");
