@@ -14,20 +14,20 @@
     <h1>{% block header %}Django App{% endblock %}</h1>
     <div>
       {% if user.is_authenticated %}
-        <span>Hola, {{ user.username }}!</span>
-        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+        <span>Hello, {{ user.username }}!</span>
+        <a class="boton" href="{% url 'evaluate' %}">Evaluate</a>
+          <a class="boton" href="{% url 'reevaluate' %}">Reevaluate</a>
+          <a class="boton" href="{% url 'analysis' %}">Results</a>
+          <a class="boton" href="{% url 'course' %}">Courses</a>       
+          <a class="boton" href="{% url 'api' %}">Models</a>
+          <form action="{% url 'logout' %}" method="post" style="display: inline;">
             {% csrf_token %}
-            <button type="submit" class="boton">Cerrar sesión</button>
+            <button type="submit" class="boton">Logout</button>
         </form>
       {% else %}
         <a class="boton" href="{% url 'login' %}">Iniciar sesión</a>
         <a class="boton" href="{% url 'signup' %}">Registrarse</a>
       {% endif %}
-          <a class="boton" href="{% url 'evaluate' %}">Evaluate</a>
-          <a class="boton" href="{% url 'reevaluate' %}">Reevaluate</a>
-          <a class="boton" href="{% url 'analysis' %}">Results</a>
-          <a class="boton" href="{% url 'course' %}">Courses</a>       
-          <a class="boton" href="{% url 'api' %}">Models</a>
       </div>
   </div>
   <div class="section">
