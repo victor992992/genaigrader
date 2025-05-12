@@ -9,7 +9,7 @@ from genaigrader.llm_api import LlmApi
 
 @login_required
 def reevaluate_view(request):
-    """Vista para mostrar exámenes del usuario actual"""
+    """View to display current user's exams"""
     exams = Exam.objects.filter(creator_username=request.user)
     models = Model.objects.all()
     local_models = [m for m in models if not m.is_external]
@@ -22,7 +22,7 @@ def reevaluate_view(request):
 
 @csrf_exempt
 def reevaluate_exam(request):
-    """Procesa la reevaluación"""
+    """Process reevaluation"""
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -30,7 +30,7 @@ def reevaluate_exam(request):
             model_description = data.get('model')
             user_prompt = data.get('user_prompt', '')
 
-            # Validar propiedad del examen
+            # Validate exam ownership
             exam = Exam.objects.get(
                 id=exam_id,
                 creator_username=request.user  
@@ -41,7 +41,7 @@ def reevaluate_exam(request):
             questions = exam.question_set.prefetch_related('questionoption_set').all()
             
             if not questions.exists():
-                return HttpResponse("El examen no tiene preguntas", status=400)
+                return HttpResponse("The exam has no questions", status=400)
             total_questions = len(questions)
 
             try:
@@ -56,9 +56,9 @@ def reevaluate_exam(request):
             )
 
         except Exam.DoesNotExist:
-            return HttpResponse("Examen no encontrado o no autorizado", status=404)
+            return HttpResponse("Exam not found or unauthorized", status=404)
         except Model.DoesNotExist:
-            return HttpResponse("Modelo no válido", status=400)
+            return HttpResponse("Invalid model", status=400)
         except Exception as e:
             print(f"Error: {str(e)}")
-            return HttpResponse(f"Error interno: {str(e)}", status=500)
+            return HttpResponse(f"Internal error: {str(e)}", status=500)

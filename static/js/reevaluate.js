@@ -1,4 +1,3 @@
-// reevaluate.js
 $(document).ready(function () {
   $("#reevaluate-form").submit(function (event) {
     event.preventDefault();
@@ -8,7 +7,7 @@ $(document).ready(function () {
     const userPrompt = $("#user-prompt").val();
 
     if (!examId) {
-      alert("Por favor selecciona un examen");
+      alert("Please select an exam");
       return;
     }
 
@@ -30,14 +29,14 @@ $(document).ready(function () {
     })
       .then((response) => {
         if (!response.ok) {
-          return handleErrorResponse(response, "Hubo un error con el procesamiento del archivo.");
+          return handleErrorResponse(response, "There was an error processing the file.");
         }
         return handleStreamingResponse(response, updateUI);
       })
       .catch((error) => {
         console.error("Error:", error);
         $("#loading-indicator").hide();
-        $("#exam-results").html("Error al reevaluar el examen.");
+        $("#exam-results").html("Error reevaluating the exam.");
       });
   });
 });

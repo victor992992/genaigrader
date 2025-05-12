@@ -1,21 +1,21 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Reevaluar Examen{% endblock %}
-{% block header %}Reevaluar Examen Existente{% endblock %}
+{% block title %}Reevaluate Exam{% endblock %}
+{% block header %}Reevaluate Existing Exam{% endblock %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/reevaluate.css' %}">
 {% endblock %}
 
 {% block content %}
-  <h2>Seleccionar Examen para Reevaluar</h2>
+  <h2>Select Exam to Reevaluate</h2>
   <form id="reevaluate-form">
     {% csrf_token %}
 
-    <!-- Selección de examen existente -->
+    <!-- Existing exam selection -->
     <div class="form-section">
-      <label for="exam-select">Examen existente:</label>
+      <label for="exam-select">Existing exam:</label>
       <select id="exam-select" name="exam_id" required>
         {% for exam in exams %}
           <option value="{{ exam.id }}">{{ exam.course.name }} - {{ exam.description }}</option>
@@ -25,13 +25,13 @@
 
     {% include "partials/model_select.html" %}
 
-    <!-- Prompt opcional -->
+    <!-- Optional prompt -->
     <div class="form-section">
-      <label for="user-prompt">Prompt personalizado (opcional):</label>
-      <input type="text" id="user-prompt" name="user_prompt" placeholder="Escribe tu prompt..."/>
+      <label for="user-prompt">Custom prompt (optional):</label>
+      <input type="text" id="user-prompt" name="user_prompt" placeholder="Write your prompt..."/>
     </div>
 
-    <button type="submit">Reevaluar Examen</button>
+    <button type="submit">Reevaluate Exam</button>
   </form>
 
   {% include "partials/loading_feedback.html" %}
