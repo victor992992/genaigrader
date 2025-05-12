@@ -10,7 +10,81 @@
   --border-color: #334155;
 }
 
-/* Estilos generales del formulario */
+/* Estilos generales y formulario de descarga */
+h2 {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 2.2rem;
+  color: var(--text-color);
+  margin: 2rem 0 1.5rem;
+  position: relative;
+  padding-left: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 80%;
+  background: linear-gradient(
+    180deg,
+    var(--primary-color) 0%,
+    var(--secondary-color) 100%
+  );
+  border-radius: 3px;
+}
+
+
+.download-container {
+  background: var(--background-medium);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.download-container h2 {
+  margin-top: 0;
+  font-size: 1.25rem;
+  color: var(--text-color);
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+#download-form {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+#download-form input {
+  flex: 1;
+  min-width: 250px;
+  padding: 0.75rem;
+  background: var(--background-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-color);
+}
+
+#download-form button {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Formulario creación modelos externos */
 #show-form {
   background-color: var(--success-color);
   color: var(--text-color);
@@ -79,7 +153,7 @@
 #model-table {
   width: 100%;
   border-collapse: collapse;
-  margin: 2rem auto;
+  margin: 1rem auto;
   background: var(--background-medium);
   border: 1px solid var(--border-color);
   border-radius: 12px;
@@ -98,6 +172,89 @@
 #model-table th {
   background-color: var(--secondary-color);
   font-weight: 600;
+}
+
+/* Secciones locales/externos */
+.section-header td {
+  background: var(--secondary-color) !important;
+  padding: 0.5rem 1rem !important;
+  border-bottom: 2px solid var(--primary-color) !important;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-header h3::before {
+  content: "";
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary-color);
+}
+
+#model-table td[data-full-value="N/A"] {
+  color: var(--text-light);
+  font-style: italic;
+}
+
+/* Mensajes de estado */
+.message {
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  animation: slideIn 0.3s ease-out;
+  border: 1px solid transparent;
+}
+
+.message::before {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.message.info {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.message.info::before {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%233b82f6"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>');
+}
+
+.message.success {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: var(--success-color);
+  color: var(--success-color);
+}
+
+.message.success::before {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2322c55e"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>');
+}
+
+.message.error {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: var(--error-color);
+  color: var(--error-color);
+}
+
+.message.error::before {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ef4444"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>');
 }
 
 /* Botones de acciones */
@@ -122,54 +279,6 @@
   margin-left: 0.5rem;
 }
 
-.edit-btn:hover,
-.delete-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Animaciones */
-@keyframes slideDown {
-  from {
-      opacity: 0;
-      transform: translateY(-20px);
-  }
-  to {
-      opacity: 1;
-      transform: translateY(0);
-  }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  #creation-form {
-      padding: 1rem;
-  }
-  
-  #creation-form input {
-      padding: 0.5rem;
-  }
-  
-  #show-form, 
-  #create-btn {
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
-  }
-  
-  #model-table th, 
-  #model-table td {
-      padding: 0.75rem;
-      font-size: 0.9rem;
-  }
-  
-  .edit-btn,
-  .delete-btn {
-      padding: 0.5rem;
-      font-size: 0.85rem;
-      margin-left: 0.3rem;
-  }
-}
-
 .save-btn {
   background-color: var(--success-color);
   color: var(--text-color);
@@ -191,13 +300,83 @@
   margin-left: 0.5rem;
 }
 
+.edit-btn:hover,
+.delete-btn:hover,
 .save-btn:hover,
 .cancel-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.save-btn:active,
-.cancel-btn:active {
-  transform: translateY(0);
+/* Animaciones */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #creation-form {
+    padding: 1rem;
+  }
+  
+  #creation-form input {
+    padding: 0.5rem;
+  }
+  
+  #show-form, 
+  #create-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  #model-table th, 
+  #model-table td {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .section-header h3 {
+    font-size: 0.8rem;
+  }
+  
+  .download-container {
+    padding: 1rem;
+  }
+  
+  .message {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .message::before {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .edit-btn,
+  .delete-btn,
+  .save-btn,
+  .cancel-btn {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    margin-left: 0.3rem;
+  }
 }

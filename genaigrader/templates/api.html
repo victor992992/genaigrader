@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block content %}
-  <h2>Modelos</h2>
+  <h2>Añadir Modelo Externo</h2>
   
   <button id="show-form">Nuevo Modelo Externo</button>
   
@@ -19,6 +19,16 @@
     <input type="url" id="url" placeholder="URL">
     <input type="text" id="key" placeholder="API Key">
     <button id="create-btn">Crear</button>
+  </div>
+
+  <div class="container">
+    <h2>Descargar Modelo de Ollama</h2>
+    <form id="download-form">
+      <label for="model-name">Nombre del Modelo:</label>
+      <input type="text" id="model-name" name="model" required placeholder="ej. llama3:8b">
+      <button type="submit">Descargar</button>
+    </form>
+    <div id="message" class="message" style="display: none;"></div>
   </div>
 
   <table id="model-table">
@@ -70,15 +80,7 @@
       </tbody>
   </table>
 
-  <div class="container">
-    <h2>Descargar Modelo de Ollama</h2>
-    <form id="download-form">
-      <label for="model-name">Nombre del Modelo:</label>
-      <input type="text" id="model-name" name="model" required placeholder="ej. llama3:8b">
-      <button type="submit">Descargar</button>
-    </form>
-    <div id="message" class="message" style="display: none;"></div>
-  </div>
+
 {% endblock %}
 
 {% block extra_scripts %}
