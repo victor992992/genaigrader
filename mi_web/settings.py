@@ -129,5 +129,5 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'genaigrader'  # Redirige aquí tras iniciar sesión
-LOGOUT_REDIRECT_URL = 'login'  # Redirige aquí tras cerrar sesión
+LOGIN_REDIRECT_URL = 'evaluate'  # Redirect here after logging in
+LOGOUT_REDIRECT_URL = 'login'  # Redirect here after logging out
