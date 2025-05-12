@@ -187,12 +187,15 @@ document.addEventListener("DOMContentLoaded", () => {
             : row.originalContent.key;
         cells[3].innerHTML = row.originalContent.html;
     }
-
-    document.getElementById('download-form').addEventListener('submit', function (e) {
+document.getElementById('download-form').addEventListener('submit', function(e) {
     e.preventDefault();
     const modelName = document.getElementById('model-name').value;
     const messageBox = document.getElementById('message');
-    messageBox.style.display = 'none';  // Resetear mensaje
+    
+    // Resetear mensaje
+    messageBox.style.display = 'block';
+    messageBox.textContent = 'Iniciando descarga...';
+    messageBox.className = 'message info';
 
     fetch('/model/pull/', {
         method: 'POST',
@@ -203,23 +206,53 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ model: modelName })
     })
     .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => { throw err; });
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        
+        function read() {
+            return reader.read().then(({ done, value }) => {
+                if (done) return;
+                
+                // Procesar cada chunk
+                const chunks = decoder.decode(value).split('\n');
+                
+                chunks.forEach(chunk => {
+                    if (!chunk.trim()) return;
+                    
+                    try {
+                        const data = JSON.parse(chunk);
+                        
+                        switch(data.status) {
+                            case 'progress':
+                                messageBox.textContent = data.message;
+                                messageBox.className = 'message info';
+                                break;
+                                
+                            case 'success':
+                                messageBox.textContent = data.message;
+                                messageBox.className = 'message success';
+                                setTimeout(() => location.reload(), 2000);
+                                break;
+                                
+                            case 'error':
+                                messageBox.textContent = data.message;
+                                messageBox.className = 'message error';
+                                break;
+                        }
+                    } catch(e) {
+                        console.error('Error parsing chunk:', e);
+                    }
+                });
+                
+                return read();
+            });
         }
-        return response.json();
-    })
-    .then(data => {
-        messageBox.style.display = 'block';
-        messageBox.textContent = data.message;
-        messageBox.className = `message ${data.status}`;
-        if (data.status === 'success') {
-            location.reload();  // Recargar solo si fue exitoso
-        }
+        
+        return read();
     })
     .catch(error => {
         console.error('Error:', error);
-        messageBox.style.display = 'block';
-        messageBox.textContent = error.message || 'Error desconocido';
+        messageBox.textContent = 'Error en la conexión';
         messageBox.className = 'message error';
     });
 });

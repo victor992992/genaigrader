@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse, QueryDict
+from django.http import JsonResponse, QueryDict, StreamingHttpResponse
 from genaigrader.models import Model
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
@@ -73,56 +73,81 @@ def pull_model(request):
             response = requests.post(
                 ollama_url,
                 json={'name': model_name},
-                stream=True,
-                timeout=10
+                stream=True
             )
-            
-            # Verificar si hubo un error en la conexión
+
+            # Manejar errores de conexión con Ollama
             if response.status_code != 200:
                 return JsonResponse({
                     'status': 'error',
                     'message': f'Error en Ollama: {response.text}'
                 }, status=400)
 
-            # Analizar el stream de respuesta
-            error_occurred = False
-            error_message = None
-            for line in response.iter_lines():
-                if line:
-                    try:
-                        chunk = json.loads(line)
-                        if 'error' in chunk:
+            def stream_generator():
+                download_complete = False
+                error_occurred = False
+                
+                for line in response.iter_lines():
+                    if line:
+                        try:
+                            ollama_chunk = json.loads(line)
+                            
+                            # Enviar progreso al cliente
+                            if 'status' in ollama_chunk:
+                                yield json.dumps({
+                                    'status': 'progress',
+                                    'message': f'Descargando: {ollama_chunk["status"]}'
+                                }) + "\n"
+                                
+                            # Detectar errores
+                            if 'error' in ollama_chunk:
+                                yield json.dumps({
+                                    'status': 'error',
+                                    'message': f'Error: {ollama_chunk["error"]}'
+                                }) + "\n"
+                                error_occurred = True
+                                break
+                                
+                            # Detectar finalización exitosa
+                            if ollama_chunk.get('status') == 'success':
+                                download_complete = True
+                                
+                        except json.JSONDecodeError:
+                            yield json.dumps({
+                                'status': 'error',
+                                'message': 'Error leyendo respuesta de Ollama'
+                            }) + "\n"
                             error_occurred = True
-                            error_message = chunk['error']
                             break
-                    except json.JSONDecodeError:
-                        error_occurred = True
-                        error_message = 'Respuesta inválida de Ollama'
-                        break
 
-            if error_occurred:
-                return JsonResponse({
-                    'status': 'error',
-                    'message': f'Modelo no encontrado: {error_message}'
-                }, status=400)
-            else:
-                # Crear el modelo solo si no hubo errores
-                new_model = Model.objects.create(
-                    description=model_name,
-                    api_url=OLLAMA_BASE_URL
-                )
-                return JsonResponse({
-                    'status': 'success',
-                    'message': f'Modelo {model_name} descargado correctamente',
-                    'model_id': new_model.id
-                })
+                # Crear modelo solo si la descarga fue exitosa
+                if download_complete and not error_occurred:
+                    try:
+                        new_model = Model.objects.create(
+                            description=model_name,
+                        )
+                        yield json.dumps({
+                            'status': 'success',
+                            'message': f'Modelo {model_name} descargado correctamente!',
+                            'model_id': new_model.id
+                        }) + "\n"
+                    except Exception as e:
+                        yield json.dumps({
+                            'status': 'error',
+                            'message': f'Error creando modelo: {str(e)}'
+                        }) + "\n"
+
+            return StreamingHttpResponse(stream_generator(), content_type='application/json')
 
         except requests.exceptions.ConnectionError:
             return JsonResponse({
                 'status': 'error',
-                'message': 'No se pudo conectar al servidor Ollama. ¿Está en ejecución?'
+                'message': 'No se pudo conectar a Ollama. ¿Está ejecutándose?'
             }, status=500)
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Error inesperado: {str(e)}'
+            }, status=500)
 
-    return JsonResponse({'status': 'error', 'message': 'Método no permitido.'}, status=405)
+    return JsonResponse({'status': 'error', 'message': 'Método no permitido'}, status=405)
