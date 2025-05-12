@@ -5,12 +5,12 @@ from genaigrader.services.graphics_service import compute_model_statistics, proc
 
 @login_required
 def analysis_view(request):
-# Get courses and related exams
+    # Get courses and related exams
     user_courses = Course.objects.filter(user=request.user).prefetch_related('exam_set')
     
     course_data = []
 
-        # Process each course
+    # Process each course
     for course in user_courses:
         evaluations = Evaluation.objects.filter(exam__in=course.exam_set.all())
 

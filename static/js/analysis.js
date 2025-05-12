@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const overallTimes = JSON.parse(document.getElementById('overall-times').textContent);
 
     /**
-     * Crea un gráfico de barras con barras de error solo para los modelos con datos
+     * Creates a bar chart with error bars only for models with data
      * @param {HTMLCanvasElement} canvas
      * @param {Array} rawData
      * @param {string} field
@@ -56,28 +56,28 @@ document.addEventListener('DOMContentLoaded', function () {
     const gradeBarColour = '59,130,246';
     const timeBarColour = '255,99,132';
     
-    // Gráficos por curso
+    // Course charts
     courseData.forEach(course => {
         const g = document.getElementById(`grade-chart-${course.course.id}`);
         const t = document.getElementById(`time-chart-${course.course.id}`);
         
         if (course.model_averages.length) {
             const yRange = calculateRange(course.model_averages);
-            createErrorBarChart(g, course.model_averages, 'avg', 'Calificaciones', gradeBarColour, 2, yRange);
+            createErrorBarChart(g, course.model_averages, 'avg', 'Grades', gradeBarColour, 2, yRange);
         }
         if (course.time_averages.length) {
             const yRange = calculateRange(course.time_averages);
-            createErrorBarChart(t, course.time_averages, 'avg', 'Tiempo (s)', timeBarColour, 1, yRange);
+            createErrorBarChart(t, course.time_averages, 'avg', 'Time (s)', timeBarColour, 1, yRange);
         }
     });
 
-    // Gráficos globales
+    // Global charts
     if (overallGrades.length) {
         const yRange = calculateRange(overallGrades);
-        createErrorBarChart(document.getElementById('overall-grade-chart'), overallGrades, 'avg', 'Calificaciones Globales', gradeBarColour, 2, yRange);
+        createErrorBarChart(document.getElementById('overall-grade-chart'), overallGrades, 'avg', 'Global Grades', gradeBarColour, 2, yRange);
     }
     if (overallTimes.length) {
         const yRange = calculateRange(overallTimes);
-        createErrorBarChart(document.getElementById('overall-time-chart'), overallTimes, 'avg', 'Tiempo Global (s)', timeBarColour, 1, yRange);
+        createErrorBarChart(document.getElementById('overall-time-chart'), overallTimes, 'avg', 'Global Time (s)', timeBarColour, 1, yRange);
     }
 });
