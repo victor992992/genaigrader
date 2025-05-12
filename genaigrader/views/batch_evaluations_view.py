@@ -139,6 +139,39 @@ def batch_stream(exams_to_eval: Iterable, models_to_eval: Iterable, repetitions:
 
     yield f"data: {json.dumps({'done': True})}\n\n"
 
+def handle_batch_evaluations_post(request, user, exams, models):
+    """
+    Handles the POST logic for batch evaluations: parses request, filters objects, and returns StreamingHttpResponse.
+    Args:
+        request: Django HttpRequest object (POST).
+        user: The current user.
+        exams: Queryset of all exams for the user.
+        models: Queryset of all models.
+    Returns:
+        StreamingHttpResponse for the batch evaluation stream.
+    """
+    logging.warning('Batch evaluation POST received')
+    if request.content_type == 'application/json':
+        data = json.loads(request.body)
+        selected_exam_ids = data.get('exams[]', [])
+        selected_model_ids = data.get('models[]', [])
+        repetitions = int(data.get('repetitions', 1))
+    else:
+        selected_exam_ids = request.POST.getlist('exams[]')
+        selected_model_ids = request.POST.getlist('models[]')
+        repetitions = int(request.POST.get('repetitions', 1))
+
+    logging.warning(f'selected_exam_ids: {selected_exam_ids}, selected_model_ids: {selected_model_ids}, repetitions: {repetitions}')
+
+    exams_to_eval = exams.filter(id__in=selected_exam_ids)
+    models_to_eval = models.filter(id__in=selected_model_ids)
+    logging.warning(f'exams_to_eval: {[e.id for e in exams_to_eval]}, models_to_eval: {[m.id for m in models_to_eval]}')
+
+    return StreamingHttpResponse(
+        batch_stream(exams_to_eval, models_to_eval, repetitions),
+        content_type="text/event-stream"
+    )
+
 @login_required
 @csrf_exempt
 def batch_evaluations_view(request):
@@ -155,27 +188,7 @@ def batch_evaluations_view(request):
     models = Model.objects.all()
 
     if request.method == 'POST':
-        logging.warning('Batch evaluation POST received')
-        if request.content_type == 'application/json':
-            data = json.loads(request.body)
-            selected_exam_ids = data.get('exams[]', [])
-            selected_model_ids = data.get('models[]', [])
-            repetitions = int(data.get('repetitions', 1))
-        else:
-            selected_exam_ids = request.POST.getlist('exams[]')
-            selected_model_ids = request.POST.getlist('models[]')
-            repetitions = int(request.POST.get('repetitions', 1))
-
-        logging.warning(f'selected_exam_ids: {selected_exam_ids}, selected_model_ids: {selected_model_ids}, repetitions: {repetitions}')
-
-        exams_to_eval = Exam.objects.filter(id__in=selected_exam_ids, creator_username=user)
-        models_to_eval = Model.objects.filter(id__in=selected_model_ids)
-        logging.warning(f'exams_to_eval: {[e.id for e in exams_to_eval]}, models_to_eval: {[m.id for m in models_to_eval]}')
-
-        return StreamingHttpResponse(
-            batch_stream(exams_to_eval, models_to_eval, repetitions),
-            content_type="text/event-stream"
-        )
+        return handle_batch_evaluations_post(request, user, exams, models)
 
     # GET request: render the form
     return render(request, 'batch_evaluations.html', {
