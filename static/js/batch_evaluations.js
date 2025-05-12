@@ -122,6 +122,21 @@ function processBatchEvalChunk(chunk) {
       } else {
         $("#progress-bar").text(data.progress);
       }
+    } else if (data.processed_questions && data.response) {
+      // Show per-question result as it arrives
+      const response = data.response;
+      const responseColor = response.is_correct ? "green" : "red";
+      const detailsHtml = `
+        <div style="border:1px solid #ccc; padding:8px; margin:8px 0; border-radius:4px;">
+          <b>Question ${data.processed_questions}:</b>
+          <pre>${response.question_prompt}</pre>
+          <b>Model response:</b> <span style="color:${responseColor}; font-weight:bold;">${response.response}</span><br>
+          <b>Correct option:</b> ${response.correct_option}
+          <span style="margin-left:1em;">${response.is_correct ? "✅" : "❌"}</span>
+          <div style="font-size:0.9em; color:#888;">Time: ${data.time || "-"}s</div>
+        </div>
+      `;
+      $("#exam-details").append(detailsHtml);
     } else if (data.response) {
       // Use appendResponseDetails from utils.js for consistent UI
       const progressLike = {

@@ -54,18 +54,6 @@ def validate_model(model: Model) -> 'LlmApi':
     llm.validate()
     return llm
 
-def run_evaluation(questions: Iterable, llm: 'LlmApi', exam: Exam) -> List[str]:
-    """
-    Runs evaluation for the given questions, llm, and exam.
-    Args:
-        questions: Iterable of questions.
-        llm: LlmApi instance.
-        exam: Exam object.
-    Returns:
-        List of response strings from the evaluation stream.
-    """
-    return list(stream_responses(questions, '', llm, len(questions), exam))
-
 def extract_summary(responses: List[str]) -> Dict[str, Any] | None:
     """
     Extracts summary information from the evaluation responses.
@@ -127,9 +115,9 @@ def batch_stream(exams_to_eval: Iterable, models_to_eval: Iterable, repetitions:
         logging.warning(f"Progress: {progress_msg}")
         yield f"data: {json.dumps({'progress': progress_msg})}\n\n"
 
-        responses = run_evaluation(questions, llm, exam)
-
-        for chunk in responses:
+        responses = []
+        for chunk in stream_responses(questions, '', llm, len(questions), exam):
+            responses.append(chunk)
             logging.warning(f"Yielding chunk: {chunk[:100]}")
             yield chunk
 
