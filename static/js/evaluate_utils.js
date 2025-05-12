@@ -1,7 +1,9 @@
-function updateUI(progress) {
+function updateProgressBar(progress) {
   const percentage = (progress.processed_questions / progress.total_questions) * 100;
   $("#progress-bar").css("width", percentage + "%").text(percentage.toFixed(0) + "%");
+}
 
+function appendResponseDetails(progress) {
   const response = progress.response;
   const responseColor = response.is_correct ? "var(--success-color)" : "var(--error-color)";
   const detailsHtml = `
@@ -16,14 +18,22 @@ function updateUI(progress) {
     </div>
   `;
   $("#exam-details").append(detailsHtml);
+}
 
+function displayFinalResults(progress) {
+  let totalTime = progress.total_time ? progress.total_time.toFixed(2) : 'N/A';
+  $("#exam-results").html(`
+    File processed.<br>
+    Correct answers: ${progress.correct_count}/${progress.total_questions}<br>
+    Total evaluation time: ${totalTime}s
+  `);
+}
+
+function updateUI(progress) {
+  updateProgressBar(progress);
+  appendResponseDetails(progress);
   if (progress.processed_questions === progress.total_questions) {
-    let totalTime = progress.total_time ? progress.total_time.toFixed(2) : 'N/A';
-    $("#exam-results").html(`
-      File processed.<br>
-      Correct answers: ${progress.correct_count}/${progress.total_questions}<br>
-      Total evaluation time: ${totalTime}s
-    `);
+    displayFinalResults(progress);
   }
 }
 
