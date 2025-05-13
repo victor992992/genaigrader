@@ -21,8 +21,13 @@
         <div class="batch-eval-col">
             <label for="models" class="batch-eval-label">Select Models:</label><br>
             <select name="models[]" id="models" multiple size="8" class="batch-eval-select">
-                {% for model in models %}
-                    <option value="{{ model.id }}">{{ model }}</option>
+                {% regroup models by group_label as model_grouped %}
+                {% for group in model_grouped %}
+                  <optgroup label="{{ group.grouper }}">
+                    {% for model in group.list %}
+                      <option value="{{ model.id }}">{{ model }}</option>
+                    {% endfor %}
+                  </optgroup>
                 {% endfor %}
             </select>
         </div>
