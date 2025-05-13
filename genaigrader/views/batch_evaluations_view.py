@@ -175,6 +175,10 @@ def batch_evaluations_view(request):
     exams = Exam.objects.filter(user=user)
     models = Model.objects.all()
 
+    # Annotate models with group_label for grouping in template
+    for m in models:
+        m.group_label = "Remote Models" if m.is_external else "Local Models"
+
     if request.method == 'POST':
         return handle_batch_evaluations_post(request, user, exams, models)
 
