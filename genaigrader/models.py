@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 class Course(models.Model):
     id = models.AutoField(primary_key=True)
@@ -39,10 +40,18 @@ class Model(models.Model):
     id = models.AutoField(primary_key=True)
     description = models.CharField(max_length=255)
 
-    # Campos opcionales para modelos externos
+    # Optional fields for external models
     api_url = models.URLField(max_length=500, null=True, blank=True)
     api_key = models.CharField(max_length=255, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
+    def clean(self):
+        super().clean()
+        if self.is_external and not self.user:
+            raise ValidationError("The 'user' field is required for external models")
+        if not self.is_external and self.user:
+            raise ValidationError("The 'user' field should only be used for external models")
+        
     def __str__(self):
         return self.description
 
