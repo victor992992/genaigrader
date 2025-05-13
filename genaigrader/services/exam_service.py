@@ -8,7 +8,7 @@ def create_exam(uploaded_file, course, user, request):
     return Exam(
         description=description,
         course=course,
-        creator_username=user
+        user=user
     )  # Returns unsaved instance
 
 def process_exam_file(file_path) -> List[Dict]:

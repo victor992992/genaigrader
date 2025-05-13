@@ -8,7 +8,7 @@ from genaigrader.services.graphics_service import process_evaluations_for_graphi
 @login_required
 def exam_detail(request, exam_id):
     exam = get_object_or_404(
-        Exam.objects.select_related('course', 'creator_username')
+        Exam.objects.select_related('course', 'user')
                     .prefetch_related(
                         'question_set__questionoption_set',
                         'question_set__correct_option',

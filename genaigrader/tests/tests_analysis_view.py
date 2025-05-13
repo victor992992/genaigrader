@@ -40,7 +40,7 @@ class AnalysisViewTestWithDataTest(TestCase):
         # Create related data
         course = Course.objects.create(name='Test Course', user=self.user)
         model = Model.objects.create(description='Test Model')
-        exam = Exam.objects.create(course=course, description='Test Exam', creator_username=self.user)
+        exam = Exam.objects.create(course=course, description='Test Exam', user=self.user)
 
         # Create evaluations
         Evaluation.objects.create(exam=exam, model=model, prompt="Test prompt 1", ev_date="2024-01-01", grade=8.0, time=10.0)

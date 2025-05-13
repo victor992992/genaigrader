@@ -10,7 +10,7 @@ from genaigrader.llm_api import LlmApi
 @login_required
 def reevaluate_view(request):
     """View to display current user's exams"""
-    exams = Exam.objects.filter(creator_username=request.user)
+    exams = Exam.objects.filter(user=request.user)
     models = Model.objects.all()
     local_models = [m for m in models if not m.is_external]
     external_models = [m for m in models if m.is_external]
@@ -33,7 +33,7 @@ def reevaluate_exam(request):
             # Validate exam ownership
             exam = Exam.objects.get(
                 id=exam_id,
-                creator_username=request.user  
+                user=request.user  
             )
             
             model = Model.objects.get(description=model_description)

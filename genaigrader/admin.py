@@ -12,8 +12,8 @@ class CourseAdmin(admin.ModelAdmin):
 
 @admin.register(Exam)
 class ExamAdmin(admin.ModelAdmin):
-    list_display = ('id', 'description', 'course_id', 'creator_username', 'show_questions')
-    list_filter = ('course_id', 'creator_username') 
+    list_display = ('id', 'description', 'course_id', 'user', 'show_questions')
+    list_filter = ('course_id', 'user') 
     search_fields = ('description',) 
 
     def show_questions(self, obj):
