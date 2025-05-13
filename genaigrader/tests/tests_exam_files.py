@@ -71,7 +71,7 @@ class UploadFileTestCase(TestCase):
         request.user = self.user
         return request
 
-    @patch("chat.views.evaluate_views.process_exam_file")
+    @patch("genaigrader.services.exam_service.process_exam_file")
     def test_upload_file_error_does_not_modify_database(self, mock_process_exam_file):
         """This test case checks the behavior when an error occurs during file processing.
         It should not create any exam or questions."""
@@ -145,13 +145,10 @@ class TestExamService(TestCase):
     def test_invalid_exam_file_no_options(self):
         """This test case checks the behavior when an exam file with no options is processed.
         It should raise a ValueError."""
-        user = User.objects.create_user(username="testuser", password="password")
-        course = Course.objects.create(name="Test Course", user=user)
-        exam = Exam.objects.create(description="Test Exam", course=course, creator_username=user)
-        file_path = "chat/tests/exam_files/invalid_exam_file_no_options.txt"
+        file_path = "genaigrader/tests/exam_files/invalid_exam_file_no_options.txt"
 
         # Assert that an exception is raised when calling process_exam_file
         with self.assertRaises(ValueError):
-            process_exam_file(file_path, exam)
+            process_exam_file(file_path)
 
 
