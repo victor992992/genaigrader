@@ -36,8 +36,10 @@
         <label for="repetitions" class="batch-eval-label">Repetitions per evaluation:</label>
         <input type="number" name="repetitions" id="repetitions" min="1" value="1" required>
     </div>
-    <div id="eval-count-indicator" class="batch-eval-count-indicator"></div>
-    <button type="submit" class="batch-eval-btn">Launch Batch Evaluations</button>
+    <div class="batch-eval-btn-row">
+      <button type="submit" class="batch-eval-btn">Launch Batch Evaluations</button>
+      <div id="eval-count-indicator" class="batch-eval-count-indicator"></div>
+    </div>
 </form>
 
 <!-- Progress and results UI -->
@@ -70,6 +72,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
+  <link rel="stylesheet" href="{% static 'css/batch_evaluations.css' %}">
   <script src="{% static 'js/evaluate_utils.js' %}"></script>
   <script src="{% static 'js/batch_evaluations.js' %}"></script>
 {% endblock %}
