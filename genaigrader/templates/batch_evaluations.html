@@ -8,8 +8,13 @@
         <div class="batch-eval-col">
             <label for="exams" class="batch-eval-label">Select Exams:</label><br>
             <select name="exams[]" id="exams" multiple size="8" class="batch-eval-select">
-                {% for exam in exams %}
-                    <option value="{{ exam.id }}">{{ exam }}</option>
+                {% regroup exams by course.name as subject_list %}
+                {% for subject in subject_list %}
+                  <optgroup label="{{ subject.grouper }}">
+                    {% for exam in subject.list %}
+                      <option value="{{ exam.id }}">{{ exam.description }}</option>
+                    {% endfor %}
+                  </optgroup>
                 {% endfor %}
             </select>
         </div>
