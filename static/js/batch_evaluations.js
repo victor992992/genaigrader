@@ -116,7 +116,11 @@ function processBatchEvalChunk(chunk) {
           subject: progress.subject,
           exam: progress.exam,
           repetition: progress.repetition,
+          totalReps: progress.totalReps,
         };
+        // Store current subject and exam for heading
+        window._currentExamDetailKey = `${progress.subject}|||${progress.exam}`;
+        window._examDetailHeadingShown = false;
         updateProgressBar(progress);
         $("#batch-eval-results").html(`<div style='font-size:1.1em;margin-top:0.5em;'>${progress.detailMsg}</div>`);
       } else {
@@ -124,6 +128,20 @@ function processBatchEvalChunk(chunk) {
       }
     } else if (data.processed_questions && data.response) {
       // Show per-question result as it arrives
+      // Insert heading if not already shown for this exam
+      if (!window._examDetailHeadingShown) {
+        const key = window._currentExamDetailKey || '';
+        if (key) {
+          const [subject, exam] = key.split('|||');
+          // Get repetition info from lastRow if available
+          const lastRow = window._batchEvalLastRow || {};
+          const repetition = lastRow.repetition || '-';
+          const totalReps = lastRow.totalReps || '-';
+          const headingHtml = `<div class="exam-detail-heading" style="margin-top:1em;margin-bottom:0.5em;"><b>Subject:</b> ${subject} <b>Exam:</b> ${exam} (Repetition ${repetition}/${totalReps})</div>`;
+          $("#exam-details").append(headingHtml);
+        }
+        window._examDetailHeadingShown = true;
+      }
       const response = data.response;
       const responseColor = response.is_correct ? "green" : "red";
       const detailsHtml = `
