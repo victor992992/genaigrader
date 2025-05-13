@@ -172,7 +172,7 @@ def batch_evaluations_view(request):
         HttpResponse or StreamingHttpResponse.
     """
     user = request.user
-    exams = Exam.objects.filter(creator_username=user)
+    exams = Exam.objects.filter(user=user)
     models = Model.objects.all()
 
     if request.method == 'POST':
