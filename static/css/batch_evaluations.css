@@ -1,0 +1,15 @@
+/* Styles for batch evaluations page */
+.batch-eval-btn-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1em;
+  margin-bottom: 1.2rem;
+}
+
+@media (max-width: 600px) {
+  .batch-eval-btn-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5em;
+  }
+}
