@@ -62,7 +62,7 @@ class Model(models.Model):
 class Evaluation(models.Model):
     id = models.AutoField(primary_key=True)
     prompt = models.TextField()
-    ev_date = models.DateField()
+    ev_date = models.DateTimeField()
     grade = models.FloatField()
     time = models.FloatField()
     model = models.ForeignKey(Model, on_delete= models.CASCADE)

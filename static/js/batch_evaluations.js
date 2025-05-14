@@ -184,9 +184,12 @@ function processBatchEvalChunk(chunk) {
       $("#batch-eval-summary").insertAfter("#batch-eval-results > div:first-child");
       // --- Add row to table ---
       const lastRow = window._batchEvalLastRow || {};
+      const now = new Date();
+      const datetimeStr = now.toLocaleString();
       $("#batch-eval-table").show();
       $("#batch-eval-table tbody").append(
         `<tr>
+          <td data-label="Date">${datetimeStr}</td>
           <td data-label="Model">${lastRow.model||''}</td>
           <td data-label="Subject">${lastRow.subject||''}</td>
           <td data-label="Exam">${lastRow.exam||''}</td>

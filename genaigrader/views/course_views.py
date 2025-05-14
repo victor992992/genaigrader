@@ -119,7 +119,7 @@ def export_all_evaluations(request):
         writer.writerow([
             eval.exam.course.name,
             eval.exam.description,
-            eval.ev_date.strftime("%d/%m/%Y"),
+            eval.ev_date.strftime("%d/%m/%Y %H:%M:%S"),
             eval.model.description,
             eval.prompt,
             str(eval.grade).replace('.', ','),
@@ -159,7 +159,7 @@ def export_course_evaluations(request, course_id):
     for eval in evaluations:
         writer.writerow([
             eval.exam.description,
-            eval.ev_date.strftime("%d/%m/%Y"),
+            eval.ev_date.strftime("%d/%m/%Y %H:%M:%S"),
             eval.model.description,
             eval.prompt,
             str(eval.grade).replace('.', ','),
