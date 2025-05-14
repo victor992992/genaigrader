@@ -1,0 +1,36 @@
+name: Django Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      DJANGO_SETTINGS_MODULE: mi_web.settings
+      MANAGE_PY_PATH: manage.py
+
+    steps:
+      # Paso 1: Clonar el repositorio
+      - uses: actions/checkout@v3
+
+      # Paso 2: Configurar Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      # Paso 3: Instalar uv
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      # Paso 4: Ejecutar migraciones (sin necesidad de instalar dependencias manualmente)
+      - name: Run Django migrations
+        run: |
+          ~/.local/bin/uv run python manage.py migrate
+
+      # Paso 5: Ejecutar las pruebas
+      - name: Run Django tests
+        run: |
+          ~/.local/bin/uv run python manage.py test
