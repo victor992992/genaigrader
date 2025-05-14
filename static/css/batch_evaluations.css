@@ -3,12 +3,159 @@
   display: flex;
   align-items: baseline;
   gap: 1em;
-  margin-bottom: 1.2rem;
+  margin-bottom: 0;
 }
 
 @media (max-width: 600px) {
   .batch-eval-btn-row {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0.5em;
+  }
+}
+
+.exam-detail-heading-margin {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+.exam-detail-box {
+  border: 1px solid #ccc;
+  padding: 8px;
+  margin: 8px 0;
+  border-radius: 4px;
+}
+.exam-detail-box pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.model-response-text {
+  font-weight: bold;
+}
+.correct-response {
+  color: green;
+}
+.incorrect-response {
+  color: red;
+}
+.correctness-icon {
+  margin-left: 1em;
+}
+.question-time {
+  font-size: 0.9em;
+  color: #888;
+}
+
+.progress-bar-custom {
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1em;
+  background-color: #4caf50;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  min-height: 24px;
+}
+
+.batch-eval-error {
+  color: red;
+}
+.batch-eval-progress-detail {
+  font-size: 1.1em;
+  margin-top: 0.5em;
+}
+
+.batch-eval-select {
+  width: 100%;
+  min-height: 260px;
+  padding: 10px 12px;
+  border: 2px solid #b3b3b3;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  color: #222;
+  font-size: 0.9em;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.batch-eval-select:focus {
+  border-color: #4a90e2;
+  outline: none;
+  box-shadow: 0 0 0 2px #4a90e233;
+}
+
+.batch-eval-select option {
+  padding: 6px 10px;
+}
+
+.batch-eval-select optgroup {
+  font-weight: bold;
+  color: #444;
+  background: #f8f9fa;
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 600px) {
+  .batch-eval-select {
+    min-height: 180px;
+    font-size: 1em;
+  }
+}
+
+.batch-eval-form-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1.2em;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+
+.batch-eval-form-row label {
+  margin-bottom: 0;
+  white-space: nowrap;
+  align-self: baseline;
+}
+
+.batch-eval-form-row input[type="number"] {
+  width: 80px;
+  margin-bottom: 0;
+  align-self: baseline;
+}
+
+.batch-eval-reps {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  margin-bottom: 0;
+}
+
+.batch-eval-btn {
+  flex: 0 0 auto;
+  align-self: baseline;
+}
+
+.batch-eval-count-indicator {
+  flex: 0 0 auto;
+  align-self: baseline;
+}
+
+@media (max-width: 800px) {
+  .batch-eval-form-row {
     flex-direction: column;
+    align-items: stretch;
+    gap: 0.7em;
+  }
+  .batch-eval-form-row label,
+  .batch-eval-form-row input[type="number"] {
+    width: 100%;
+  }
+  .batch-eval-btn-row {
+    flex-direction: row;
     align-items: stretch;
     gap: 0.5em;
   }

@@ -67,8 +67,10 @@ def extract_summary(responses: List[str]) -> Dict[str, Any] | None:
         try:
             data = json.loads(r.replace('data: ', '').strip())
             if {'correct_count', 'total_time', 'total_questions'}.issubset(data):
+                
+                normalized_score = round(data['correct_count'] / data['total_questions'] * 10, 2)
                 return {
-                    'grade': f"{data['correct_count']}/{data['total_questions']}",
+                    'grade': f"{normalized_score} ({data['correct_count']}/{data['total_questions']})",
                     'time': data['total_time']
                 }
         except json.JSONDecodeError as e:
