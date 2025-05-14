@@ -64,7 +64,7 @@
             <tbody>
                 {% for eval in evaluations %}
                 <tr data-eval-id="{{ eval.id }}">
-                    <td>{{ eval.ev_date|date:"d/m/Y" }}</td>
+                    <td>{{ eval.ev_date|date:"d/m/Y H:i:s" }}</td>
                     <td>{{ eval.model.description }}</td>
                     <td class="truncate-text">{{ eval.prompt|truncatechars:30 }}</td>
                     <td>{{ eval.grade }}</td>

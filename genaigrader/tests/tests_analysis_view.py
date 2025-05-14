@@ -43,8 +43,8 @@ class AnalysisViewTestWithDataTest(TestCase):
         exam = Exam.objects.create(course=course, description='Test Exam', user=self.user)
 
         # Create evaluations
-        Evaluation.objects.create(exam=exam, model=model, prompt="Test prompt 1", ev_date="2024-01-01", grade=8.0, time=10.0)
-        Evaluation.objects.create(exam=exam, model=model, prompt="Test prompt 2", ev_date="2024-01-02", grade=9.0, time=12.0)
+        Evaluation.objects.create(exam=exam, model=model, prompt="Test prompt 1", ev_date="2024-01-01 10:00:00", grade=8.0, time=10.0)
+        Evaluation.objects.create(exam=exam, model=model, prompt="Test prompt 2", ev_date="2024-01-02 12:30:00", grade=9.0, time=12.0)
 
     def test_analysis_view_context(self):
         response = self.client.get(reverse('analysis')) 
