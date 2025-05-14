@@ -137,4 +137,9 @@ GitHub.sublime-settings
 !.vscode/extensions.json 
 .history
 
-uploaded_files
+# Ignore everything in the uploaded_files directory
+uploaded_files/*
+
+# But keep the .gitkeep file so that the directory is present,
+# because it's needed in the deployment process
+!uploaded_files/.gitkeep
