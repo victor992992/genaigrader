@@ -17,7 +17,7 @@ function parseProgress(progressStr) {
     repetition: match[6],
     totalReps: match[7],
     evalMsg: `Eval ${match[1]}/${match[2]}`,
-    detailMsg: `Evaluating ${match[3]} on ${match[4]} with ${match[5]} (${match[6]}/${match[7]})`
+    detailMsg: `Evaluating <b>${match[3]}</b> on <b>${match[4]}</b> with <b>${match[5]}</b> (Repetition ${match[6]}/${match[7]})`
   };
 }
 
@@ -27,21 +27,8 @@ function parseProgress(progressStr) {
  */
 function updateProgressBar(progress) {
   $("#progress-bar")
-    .css({
-      'text-align': 'center',
-      'white-space': 'nowrap',
-      'overflow': 'hidden',
-      'text-overflow': 'ellipsis',
-      'font-weight': 'bold',
-      'font-size': '1.1em',
-      'background-color': '#4caf50',
-      'color': 'white',
-      'display': 'flex',
-      'align-items': 'center',
-      'justify-content': 'center',
-      'min-width': '60px',
-      'min-height': '24px',
-    })
+    .removeAttr('style')
+    .addClass('progress-bar-custom')
     .text(progress.evalMsg);
   if (!isNaN(progress.currentEval) && !isNaN(progress.totalEval) && progress.totalEval > 0) {
     const percent = Math.round((progress.currentEval / progress.totalEval) * 100);
@@ -107,7 +94,7 @@ function processBatchEvalChunk(chunk) {
   try {
     const data = JSON.parse(chunk.replace("data: ", ""));
     if (data.error) {
-      $("#batch-eval-results").append(`<div style='color:red;'>${data.error}</div>`);
+      $("#batch-eval-results").append(`<div class="batch-eval-error">${data.error}</div>`);
     } else if (data.progress) {
       const progress = parseProgress(data.progress);
       if (progress) {
@@ -122,7 +109,7 @@ function processBatchEvalChunk(chunk) {
         window._currentExamDetailKey = `${progress.subject}|||${progress.exam}`;
         window._examDetailHeadingShown = false;
         updateProgressBar(progress);
-        $("#batch-eval-results").html(`<div style='font-size:1.1em;margin-top:0.5em;'>${progress.detailMsg}</div>`);
+        $("#batch-eval-results").html(`<div class="batch-eval-progress-detail">${progress.detailMsg}</div>`);
       } else {
         $("#progress-bar").text(data.progress);
       }
@@ -133,25 +120,32 @@ function processBatchEvalChunk(chunk) {
         const key = window._currentExamDetailKey || '';
         if (key) {
           const [subject, exam] = key.split('|||');
-          // Get repetition info from lastRow if available
+          // Get model and repetition info from lastRow if available
           const lastRow = window._batchEvalLastRow || {};
+          const model = lastRow.model || '-';
           const repetition = lastRow.repetition || '-';
           const totalReps = lastRow.totalReps || '-';
-          const headingHtml = `<div class="exam-detail-heading" style="margin-top:1em;margin-bottom:0.5em;"><b>Subject:</b> ${subject} <b>Exam:</b> ${exam} (Repetition ${repetition}/${totalReps})</div>`;
+          const headingHtml = `
+            <div class="exam-detail-heading exam-detail-heading-margin">
+              <span class="exam-detail-label">Model:</span> <span class="exam-detail-value">${model} - </span>
+              <span class="exam-detail-label">Subject:</span> <span class="exam-detail-value">${subject} - </span>
+              <span class="exam-detail-label">Exam:</span> <span class="exam-detail-value">${exam} - </span>
+              <span class="exam-detail-label">Repetition:</span> <span class="exam-detail-value">${repetition}/${totalReps}</span>
+            </div>
+            `;
           $("#exam-details").append(headingHtml);
         }
         window._examDetailHeadingShown = true;
       }
       const response = data.response;
-      const responseColor = response.is_correct ? "green" : "red";
       const detailsHtml = `
-        <div style="border:1px solid #ccc; padding:8px; margin:8px 0; border-radius:4px;">
+        <div class="exam-detail-box">
           <b>Question ${data.processed_questions}:</b>
           <pre>${response.question_prompt}</pre>
-          <b>Model response:</b> <span style="color:${responseColor}; font-weight:bold;">${response.response}</span><br>
+          <b>Model response:</b> <span class="model-response-text ${response.is_correct ? 'correct-response' : 'incorrect-response'}">${response.response}</span><br>
           <b>Correct option:</b> ${response.correct_option}
-          <span style="margin-left:1em;">${response.is_correct ? "✅" : "❌"}</span>
-          <div style="font-size:0.9em; color:#888;">Time: ${data.time || "-"}s</div>
+          <span class="correctness-icon">${response.is_correct ? "✅" : "❌"}</span>
+          <div class="question-time">Time: ${data.time || "-"}s</div>
         </div>
       `;
       $("#exam-details").append(detailsHtml);
@@ -200,7 +194,13 @@ function processBatchEvalChunk(chunk) {
       );
     } else if (data.done) {
       // Do not clear or append, just mark finished
-      $("#batch-eval-results").html("<div>Batch evaluation finished.</div>");
+      let finishedMsg = "Batch evaluation finished.";
+      if (window._batchEvalStartTime) {
+        const elapsedMs = Date.now() - window._batchEvalStartTime;
+        const elapsedStr = formatDuration(elapsedMs);
+        finishedMsg += ` <span class="batch-eval-time">(Total time: ${elapsedStr})</span>`;
+      }
+      $("#batch-eval-results").html(`<div>${finishedMsg}</div>`);
       $("#loading-indicator").hide();
     }
   } catch (e) {
@@ -217,6 +217,9 @@ $(document).ready(function () {
     $("#progress-bar").css("width", "0%").text("0%");
     $("#batch-eval-results").html("");
     $("#exam-details").html("");
+    
+    // Record start time for batch evaluation
+    window._batchEvalStartTime = Date.now();
     
     // Collect and prepare data
     const data = collectBatchEvalFormData(this);
@@ -237,6 +240,25 @@ $(document).ready(function () {
       });
   });
 });
+
+/**
+ * Formats a duration in milliseconds into a human-readable string.
+ * Examples: "5s", "2m 10s", "1h 3m 5s", "1d 2h 3m 5s"
+ * @param {number} ms - Duration in milliseconds
+ * @returns {string} Human-readable duration
+ */
+function formatDuration(ms) {
+  const sec = Math.floor(ms / 1000) % 60;
+  const min = Math.floor(ms / (1000 * 60)) % 60;
+  const hr = Math.floor(ms / (1000 * 60 * 60)) % 24;
+  const day = Math.floor(ms / (1000 * 60 * 60 * 24));
+  let parts = [];
+  if (day > 0) parts.push(`${day}d`);
+  if (hr > 0) parts.push(`${hr}h`);
+  if (min > 0) parts.push(`${min}m`);
+  if (sec > 0 || parts.length === 0) parts.push(`${sec}s`);
+  return parts.join(' ');
+}
 
 /**
  * Updates the evaluation count indicator based on selected exams, models, and repetitions.

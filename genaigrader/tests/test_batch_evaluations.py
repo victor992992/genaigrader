@@ -63,7 +63,7 @@ class ExtractSummaryTestCase(unittest.TestCase):
             'data: {"total_time": 3.14, "correct_count": 4, "total_questions": 5}\n\n'
         ]
         result = extract_summary(responses)
-        correct_summary = {'grade': '4/5', 'time': 3.14}
+        correct_summary = {'grade': '8.0 (4/5)', 'time': 3.14}
         self.assertEqual(result, correct_summary)
 
     def test_extract_summary_invalid_json(self):

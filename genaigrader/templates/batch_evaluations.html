@@ -32,13 +32,11 @@
             </select>
         </div>
     </div>
-    <div class="batch-eval-reps">
-        <label for="repetitions" class="batch-eval-label">Repetitions per evaluation:</label>
-        <input type="number" name="repetitions" id="repetitions" min="1" value="1" required>
-    </div>
-    <div class="batch-eval-btn-row">
-      <button type="submit" class="batch-eval-btn">Launch Batch Evaluations</button>
-      <div id="eval-count-indicator" class="batch-eval-count-indicator"></div>
+    <div class="batch-eval-form-row">
+        <label for="repetitions" class="batch-eval-label" style="margin-bottom:0;">Repetitions per eval:</label>
+        <input type="number" name="repetitions" id="repetitions" min="1" value="1" required style="margin-bottom:0;">
+        <button type="submit" class="batch-eval-btn">Launch Batch Evaluations</button>
+        <div id="eval-count-indicator" class="batch-eval-count-indicator"></div>
     </div>
 </form>
 
