@@ -120,19 +120,23 @@ function processBatchEvalChunk(chunk) {
         const key = window._currentExamDetailKey || '';
         if (key) {
           const [subject, exam] = key.split('|||');
-          // Get model and repetition info from lastRow if available
           const lastRow = window._batchEvalLastRow || {};
           const model = lastRow.model || '-';
           const repetition = lastRow.repetition || '-';
           const totalReps = lastRow.totalReps || '-';
+
+          // Create a unique evalId for this evaluation
+          const evalId = `eval-${btoa(`${model}|${subject}|${exam}|${repetition}|${Date.now()}`).replace(/[^a-zA-Z0-9]/g, '')}`;
+          window._lastEvalId = evalId; // Store for use in table row
+
           const headingHtml = `
-            <div class="exam-detail-heading exam-detail-heading-margin">
+            <div id="${evalId}" class="exam-detail-heading exam-detail-heading-margin eval-details-section">
               <span class="exam-detail-label">Model:</span> <span class="exam-detail-value">${model} - </span>
               <span class="exam-detail-label">Subject:</span> <span class="exam-detail-value">${subject} - </span>
               <span class="exam-detail-label">Exam:</span> <span class="exam-detail-value">${exam} - </span>
               <span class="exam-detail-label">Repetition:</span> <span class="exam-detail-value">${repetition}/${totalReps}</span>
             </div>
-            `;
+          `;
           $("#exam-details").append(headingHtml);
         }
         window._examDetailHeadingShown = true;
@@ -149,6 +153,15 @@ function processBatchEvalChunk(chunk) {
         </div>
       `;
       $("#exam-details").append(detailsHtml);
+
+      // Add Back to Top link after the last question
+      if (
+        (typeof response.total_questions !== 'undefined' && data.processed_questions == response.total_questions) ||
+        (typeof data.total_questions !== 'undefined' && data.processed_questions == data.total_questions)
+      ) {
+        $("#exam-details").append('<div class="back-to-top-link-container"><a href="#top" class="back-to-top-link no-underline">⬆ Back to Top</a></div>');
+      }
+
     } else if (data.response) {
       // Use appendResponseDetails from utils.js for consistent UI
       const progressLike = {
@@ -165,6 +178,7 @@ function processBatchEvalChunk(chunk) {
       // Show the result of the last eval (grade and time)
       const grade = data.eval_result.grade;
       const time = data.eval_result.time;
+
       // Find or create a summary area
       let $summary = $("#batch-eval-summary");
       if ($summary.length === 0) {
@@ -174,16 +188,22 @@ function processBatchEvalChunk(chunk) {
       $summary.html(
         `Result: <b>${grade}</b> correct, Time: <b>${time}s</b>`
       );
+
       // Move the summary above the details, but below the progress message
       $("#batch-eval-summary").insertAfter("#batch-eval-results > div:first-child");
+
       // --- Add row to table ---
       const lastRow = window._batchEvalLastRow || {};
       const now = new Date();
       const datetimeStr = now.toLocaleString();
+
+      // Use the lastEvalId created with the headingHtml for the link
+      const evalId = window._lastEvalId || '';
+      const headingLink = `<a href="#${evalId}" class="details-link" title="View details"><span class="details-icon" aria-label="Details">🔍</span></a>`;
       $("#batch-eval-table").show();
       $("#batch-eval-table tbody").append(
         `<tr>
-          <td data-label="Date">${datetimeStr}</td>
+          <td data-label="Date">${headingLink} ${datetimeStr}</td>
           <td data-label="Model">${lastRow.model||''}</td>
           <td data-label="Subject">${lastRow.subject||''}</td>
           <td data-label="Exam">${lastRow.exam||''}</td>
@@ -192,6 +212,10 @@ function processBatchEvalChunk(chunk) {
           <td data-label="Time">${time}</td>
         </tr>`
       );
+      if (!document.getElementById(evalId)) {
+        // Now append the details section after the table row
+        $("#exam-details").append(`<div id="${evalId}" class="eval-details-section"></div>`);
+      }
     } else if (data.done) {
       // Do not clear or append, just mark finished
       let finishedMsg = "Batch evaluation finished.";
