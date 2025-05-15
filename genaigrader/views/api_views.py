@@ -3,6 +3,7 @@ from django.http import JsonResponse, QueryDict, StreamingHttpResponse
 from genaigrader.models import Model
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 import json
 import requests
@@ -10,6 +11,7 @@ import requests
 
 OLLAMA_BASE_URL = "http://localhost:11434"
 
+@login_required
 def api_view(request):
     local_models = Model.objects.filter(api_url__isnull=True, api_key__isnull=True)
     external_models = Model.objects.exclude(api_url__isnull=True, api_key__isnull=True)
