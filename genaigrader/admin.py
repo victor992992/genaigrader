@@ -50,13 +50,17 @@ class ModelAdmin(admin.ModelAdmin):
 
 @admin.register(Evaluation)
 class EvaluationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'prompt', 'ev_date', 'grade', 'time', 'model_id', 'exam_id', 'show_question_evaluations')
+    list_display = ('id', 'prompt', 'ev_date', 'grade', 'time', 'model_id', 'show_model_description', 'exam_id', 'show_question_evaluations')
     list_filter = ('model_id', 'exam_id')  
-    search_fields = ('prompt',)  
+    search_fields = ('prompt', 'model__description',)
 
     def show_question_evaluations(self, obj):
         return ", ".join([f"Q{qe.question.id} (O{qe.question_option.id})" for qe in obj.questionevaluation_set.all()])
     show_question_evaluations.short_description = 'Evaluaciones de Preguntas'
+
+    def show_model_description(self, obj):
+        return obj.model.description
+    show_model_description.short_description = 'Model Description'
 
 @admin.register(QuestionEvaluation)
 class QuestionEvaluationAdmin(admin.ModelAdmin):
