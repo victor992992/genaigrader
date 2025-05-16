@@ -94,7 +94,7 @@ function processBatchEvalChunk(chunk) {
   try {
     const data = JSON.parse(chunk.replace("data: ", ""));
     if (data.error) {
-      $("#batch-eval-results").append(`<div class="batch-eval-error">${data.error}</div>`);
+      $("#batch-eval-errors").append(`<div class="batch-eval-error">${data.error}</div>`);
     } else if (data.progress) {
       const progress = parseProgress(data.progress);
       if (progress) {
@@ -228,6 +228,7 @@ function processBatchEvalChunk(chunk) {
       $("#loading-indicator").hide();
     }
   } catch (e) {
+    $("#batch-eval-errors").append(`<div class="batch-eval-error">Error parsing chunk: ${e.message}</div>`);
     console.error("Error parsing chunk:", e);
   }
 }
@@ -240,6 +241,7 @@ $(document).ready(function () {
     $("#loading-indicator").show();
     $("#progress-bar").css("width", "0%").text("0%");
     $("#batch-eval-results").html("");
+    $("#batch-eval-errors").html("");
     $("#exam-details").html("");
     
     // Record start time for batch evaluation
@@ -260,7 +262,7 @@ $(document).ready(function () {
       .then(handleBatchEvalStream)
       .catch((error) => {
         $("#loading-indicator").hide();
-        $("#batch-eval-results").html("Error: " + error.message);
+        $("#batch-eval-errors").html("Error: " + error.message);
       });
   });
 });

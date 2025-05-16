@@ -118,20 +118,20 @@ def batch_stream(exams_to_eval: Iterable, models_to_eval: Iterable, repetitions:
                 f"Model: <b>{model.description}</b> Subject: <b>{subject_name}</b> "
                 f"Exam: <b>{exam.description}</b> Repetition: {rep}/{repetitions}"
             )
-            logging.warning(f"Progress: {progress_msg}")
+            logging.info(f"Progress: {progress_msg}")
             yield f"data: {json.dumps({'progress': progress_msg})}\n\n"
 
             responses = []
             for chunk in stream_responses(questions, '', llm, len(questions), exam):
                 responses.append(chunk)
-                logging.warning(f"Yielding chunk: {chunk[:100]}")
+                logging.info(f"Yielding chunk: {chunk[:100]}")
                 yield chunk
 
             summary = extract_summary(responses)
             if summary:
                 yield f"data: {json.dumps({'eval_result': summary})}\n\n"
         except Exception as e:
-            error_msg = f"Error during evaluation: {str(e)}"
+            error_msg = f"Error during {progress_msg}: {str(e)}"
             logging.warning(error_msg)
             yield f"data: {json.dumps({'error': error_msg})}\n\n"
 
