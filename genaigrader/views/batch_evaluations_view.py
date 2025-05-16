@@ -20,8 +20,11 @@ def generate_eval_tasks(exams: Iterable, models: Iterable, repetitions: int) -> 
     Yields:
         Tuple of (exam, model, repetition number)
     """
-    for exam in exams:
-        for model in models:
+    # Models are iterated before exams because loading a local model has
+    # a significant overhead, and we want to minimize the number of times
+    # we load the model.
+    for model in models:
+        for exam in exams:
             for rep in range(1, repetitions + 1):
                 yield exam, model, rep
 
@@ -107,25 +110,30 @@ def batch_stream(exams_to_eval: Iterable, models_to_eval: Iterable, repetitions:
             yield f"data: {json.dumps({'error': error_msg})}\n\n"
             continue
 
-        eval_count += 1
-        subject_name = getattr(exam.course, 'name', '')
-        progress_msg = (
-            f"Eval {eval_count}/{total_tasks} - "
-            f"Model: <b>{model.description}</b> Subject: <b>{subject_name}</b> "
-            f"Exam: <b>{exam.description}</b> Repetition: {rep}/{repetitions}"
-        )
-        logging.warning(f"Progress: {progress_msg}")
-        yield f"data: {json.dumps({'progress': progress_msg})}\n\n"
+        try:
+            eval_count += 1
+            subject_name = getattr(exam.course, 'name', '')
+            progress_msg = (
+                f"Eval {eval_count}/{total_tasks} - "
+                f"Model: <b>{model.description}</b> Subject: <b>{subject_name}</b> "
+                f"Exam: <b>{exam.description}</b> Repetition: {rep}/{repetitions}"
+            )
+            logging.warning(f"Progress: {progress_msg}")
+            yield f"data: {json.dumps({'progress': progress_msg})}\n\n"
 
-        responses = []
-        for chunk in stream_responses(questions, '', llm, len(questions), exam):
-            responses.append(chunk)
-            logging.warning(f"Yielding chunk: {chunk[:100]}")
-            yield chunk
+            responses = []
+            for chunk in stream_responses(questions, '', llm, len(questions), exam):
+                responses.append(chunk)
+                logging.warning(f"Yielding chunk: {chunk[:100]}")
+                yield chunk
 
-        summary = extract_summary(responses)
-        if summary:
-            yield f"data: {json.dumps({'eval_result': summary})}\n\n"
+            summary = extract_summary(responses)
+            if summary:
+                yield f"data: {json.dumps({'eval_result': summary})}\n\n"
+        except Exception as e:
+            error_msg = f"Error during evaluation: {str(e)}"
+            logging.warning(error_msg)
+            yield f"data: {json.dumps({'error': error_msg})}\n\n"
 
     yield f"data: {json.dumps({'done': True})}\n\n"
 
