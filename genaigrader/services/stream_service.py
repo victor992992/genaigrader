@@ -1,9 +1,9 @@
+import logging
 from genaigrader.models import Evaluation, QuestionEvaluation
 from genaigrader.services.evaluation_service import generate_prompt
 from django.utils import timezone
 import json
 import time
-
 
 def stream_responses(questions, user_prompt, llm, total_questions, exam):
     """
@@ -82,9 +82,19 @@ def process_question(correct_count, index, question, user_prompt, llm, total_que
     - dict: A dictionary containing processed question data and result.
     """
     prompt_data = generate_prompt(question, user_prompt)
-    response = list(llm.generate_response(prompt_data['prompt']))[0].strip().lower()
+    logging.info(f"Question prompt: {prompt_data['question_prompt']}")
+    llm_response_list = list(llm.generate_response(prompt_data['prompt']))
+    logging.info(f"LLM response: {''.join(llm_response_list)}")
+    if not llm_response_list:
+        # An example of a case where the LLM doesn't return any response
+        # is qwen3.06b: it get's stuck in an infinite loop in the thiking
+        # phase and, in the end, it doesn't generate the "</thikning>" tag
+        # and, therefore, it doesn't return any response.
+        response = ""
+    else:
+        response = llm_response_list[0].strip().lower()[0]
 
-    is_correct = (response[0] == question.correct_option.content.strip().lower()[0])
+    is_correct = (response == question.correct_option.content.strip().lower()[0])
 
     QuestionEvaluation.objects.create(
         evaluation=evaluation,
