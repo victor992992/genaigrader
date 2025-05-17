@@ -10,7 +10,7 @@ def evaluate_view(request):
     models = Model.objects.all()
     local_models = [m for m in models if not m.is_external]
     external_models = [m for m in models if m.is_external]
-    courses = Course.objects.all()
+    courses = Course.objects.filter(user=request.user)
     return render(request, "evaluate.html", {
         "courses": courses,
         "local_models": local_models,

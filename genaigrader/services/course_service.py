@@ -15,7 +15,7 @@ def get_or_create_course(request):
 
 def create_new_course(name, user):
     """Crea una nueva asignatura validando su unicidad"""
-    if Course.objects.filter(name__iexact=name).exists():
+    if Course.objects.filter(name__iexact=name, user=user).exists():
         raise ValidationError("Esta asignatura ya existe")
     return Course.objects.create(name=name, user=user)
 
