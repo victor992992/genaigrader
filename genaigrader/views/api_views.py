@@ -73,6 +73,12 @@ def pull_model(request):
             if not model_name:
                 return JsonResponse({'status': 'error', 'message': 'Model name cannot be empty.'}, status=400)
 
+            if Model.objects.filter(description=model_name).exists():
+                return JsonResponse({
+                    'status': 'error',
+                    'message': f'Model "{model_name}" already exists in the database.'
+                }, status=400)
+
             ollama_url = f"{OLLAMA_BASE_URL}/api/pull"
             
             # Make the request to Ollama with streaming
