@@ -4,6 +4,7 @@ from genaigrader.models import Course, Exam, Model
 from django.views.decorators.csrf import csrf_exempt
 from django.http import StreamingHttpResponse
 from django.utils import timezone
+from genaigrader.services.get_models_service import get_models_for_user
 from genaigrader.services.stream_service import stream_responses
 from genaigrader.llm_api import LlmApi
 import logging
@@ -186,8 +187,7 @@ def batch_evaluations_view(request):
     courses = Course.objects.filter(user=user)
 
  
-    local_models = Model.objects.filter(api_url__isnull=True, api_key__isnull=True)
-    external_models = Model.objects.exclude(api_url__isnull=True, api_key__isnull=True)
+    local_models, external_models = get_models_for_user(user)
 
     # Group exams by course
     courses_with_exams = {}

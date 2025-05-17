@@ -8,13 +8,14 @@ from django.shortcuts import get_object_or_404
 import json
 import requests
 
+from genaigrader.services.get_models_service import get_models_for_user
+
 
 OLLAMA_BASE_URL = "http://localhost:11434"
 
 @login_required
 def api_view(request):
-    local_models = Model.objects.filter(api_url__isnull=True, api_key__isnull=True)
-    external_models = Model.objects.exclude(api_url__isnull=True, api_key__isnull=True)
+    local_models, external_models = get_models_for_user(request.user)
     return render(request, 'api.html', {
         'local_models': local_models,
         'external_models': external_models
@@ -49,7 +50,8 @@ def create_model(request):
         new_model = Model.objects.create(
             description=data['description'],
             api_url=data['api_url'],
-            api_key=data['api_key']
+            api_key=data['api_key'],
+            user=request.user
         )
         return JsonResponse({
             'status': 'success',
@@ -57,7 +59,7 @@ def create_model(request):
                 'id': new_model.id,
                 'description': new_model.description,
                 'api_url': new_model.api_url,
-                'api_key': new_model.api_key
+                'api_key': new_model.api_key,
             }
         })
     except Exception as e:

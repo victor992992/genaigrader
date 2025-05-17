@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 import json
 from genaigrader.models import Exam, Model, Question
+from genaigrader.services.get_models_service import get_models_for_user
 from genaigrader.services.stream_service import stream_responses
 from genaigrader.llm_api import LlmApi
 
@@ -11,14 +12,13 @@ from genaigrader.llm_api import LlmApi
 def reevaluate_view(request):
     """View to display current user's exams"""
     exams = Exam.objects.filter(user=request.user)
-    models = Model.objects.all()
-    local_models = [m for m in models if not m.is_external]
-    external_models = [m for m in models if m.is_external]
+    local_models, external_models = get_models_for_user(request.user)
     return render(request, "reevaluate.html", {
         "exams": exams,
-        "local_models": local_models,     
-        "external_models": external_models
+        "local_models": local_models,
+        "external_models": external_models,
     })
+
 
 @csrf_exempt
 def reevaluate_exam(request):
