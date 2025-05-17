@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 import json
 import requests
-
 from genaigrader.services.get_models_service import get_models_for_user
 
 

@@ -50,7 +50,9 @@
               <td>N/A</td>
               <td>N/A</td>
               <td>
-                  <button class="delete-btn">Delete</button>
+                  {% if request.user.is_superuser %}
+                      <button class="delete-btn">Delete</button>
+                  {% endif %}
               </td>
           </tr>
           {% empty %}
