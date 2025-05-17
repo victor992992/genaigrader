@@ -9,10 +9,9 @@
         <div class="batch-eval-col">
             <label for="exams" class="batch-eval-label">Select Exams:</label><br>
             <select name="exams[]" id="exams" multiple size="8" class="batch-eval-select">
-                {% regroup exams by course.name as subject_list %}
-                {% for subject in subject_list %}
-                  <optgroup label="{{ subject.grouper }}">
-                    {% for exam in subject.list %}
+                {% for subject, exams in subjects_with_exams.items %}
+                  <optgroup label="{{ subject.name }}">
+                    {% for exam in exams %}
                       <option value="{{ exam.id }}">{{ exam.description }}</option>
                     {% endfor %}
                   </optgroup>
@@ -22,14 +21,20 @@
         <div class="batch-eval-col">
             <label for="models" class="batch-eval-label">Select Models:</label><br>
             <select name="models[]" id="models" multiple size="8" class="batch-eval-select">
-                {% regroup models by group_label as model_grouped %}
-                {% for group in model_grouped %}
-                  <optgroup label="{{ group.grouper }}">
-                    {% for model in group.list %}
+                {% if local_models %}
+                  <optgroup label="Local Models">
+                    {% for model in local_models %}
                       <option value="{{ model.id }}">{{ model }}</option>
                     {% endfor %}
                   </optgroup>
-                {% endfor %}
+                {% endif %}
+                {% if external_models %}
+                  <optgroup label="Remote Models">
+                    {% for model in external_models %}
+                      <option value="{{ model.id }}">{{ model }}</option>
+                    {% endfor %}
+                  </optgroup>
+                {% endif %}
             </select>
         </div>
     </div>
@@ -53,6 +58,7 @@
 </div>
 <div id="batch-eval-results"></div>
 <div id="batch-eval-errors"></div>
+
 <!-- Results Table -->
 <table id="batch-eval-table" class="batch-eval-table" style="width:100%;margin-top:1em;display:none;">
   <thead>

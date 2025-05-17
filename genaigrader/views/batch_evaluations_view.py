@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from genaigrader.models import Exam, Model
+from genaigrader.models import Course, Exam, Model
 from django.views.decorators.csrf import csrf_exempt
 from django.http import StreamingHttpResponse
 from django.utils import timezone
@@ -183,17 +183,25 @@ def batch_evaluations_view(request):
     """
     user = request.user
     exams = Exam.objects.filter(user=user)
-    models = Model.objects.all()
+    courses = Course.objects.filter(user=user)
 
-    # Annotate models with group_label for grouping in template
-    for m in models:
-        m.group_label = "Remote Models" if m.is_external else "Local Models"
+ 
+    local_models = Model.objects.filter(api_url__isnull=True, api_key__isnull=True)
+    external_models = Model.objects.exclude(api_url__isnull=True, api_key__isnull=True)
+
+    # Group exams by course
+    courses_with_exams = {}
+    for course in courses:
+        exams_for_course = exams.filter(course=course)
+        if exams_for_course.exists():
+            courses_with_exams[course] = exams_for_course
 
     if request.method == 'POST':
+        models = list(local_models) + list(external_models)
         return handle_batch_evaluations_post(request, user, exams, models)
 
-    # GET request: render the form
     return render(request, 'batch_evaluations.html', {
-        'exams': exams,
-        'models': models,
+        'local_models': local_models,
+        'external_models': external_models,
+        'subjects_with_exams': courses_with_exams,  
     })
