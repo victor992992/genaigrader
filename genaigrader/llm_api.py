@@ -127,7 +127,10 @@ class LlmApi:
         Raises:
         - ValueError: If connection/authentication/model errors occur.
         """
-        # Usamos el cliente ya inicializado
+        if not self.client:
+            # This should ideally be caught by validate() before this point.
+            raise ValueError("OpenAI client not initialized. Validation might have failed or was skipped.")
+
         response = self.client.chat.completions.create(
             model=self.model_obj.description,
             messages=[{"role": "user", "content": prompt}],
@@ -165,16 +168,21 @@ class LlmApi:
         Yields:
         - str: A stream of generated text from the selected model.
         
+        Raises:
+        - ValueError: If model validation fails (e.g., missing API key, invalid URL).
+        - ollama.ResponseError: If an error occurs while calling the local model.
+        - openai.error.OpenAIError: If an error occurs while calling the external model.
+
         Example:
         >>> llm = LlmApi(model_obj)
-        >>> for chunk in llm.generate_response("What is the capital of France?"):
-        >>>     print(chunk, end="")
+        >>> try:
+        ...     for chunk in llm.generate_response("What is the capital of France?"):
+        ...         print(chunk, end="")
+        ... except Exception as e:
+        ...     print(f"An error occurred: {e}")
         """
-        try:
-            self.validate()
-            if self.model_obj.is_external:
-                yield from self._use_external_model(prompt)
-            else:
-                yield from self._use_local_model(prompt)
-        except Exception as e:
-            yield f"Error: {str(e)}"
+        self.validate()
+        if self.model_obj.is_external:
+            yield from self._use_external_model(prompt)
+        else:
+            yield from self._use_local_model(prompt)
