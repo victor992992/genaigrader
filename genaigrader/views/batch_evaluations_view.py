@@ -163,7 +163,7 @@ def handle_batch_evaluations_post(request, user, exams, models):
     logging.warning(f'selected_exam_ids: {selected_exam_ids}, selected_model_ids: {selected_model_ids}, repetitions: {repetitions}')
 
     exams_to_eval = exams.filter(id__in=selected_exam_ids)
-    models_to_eval = models.filter(id__in=selected_model_ids)
+    models_to_eval = [m for m in models if str(m.id) in selected_model_ids]
     logging.warning(f'exams_to_eval: {[e.id for e in exams_to_eval]}, models_to_eval: {[m.id for m in models_to_eval]}')
 
     return StreamingHttpResponse(
