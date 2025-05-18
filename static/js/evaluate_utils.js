@@ -56,6 +56,14 @@ function handleStreamingResponse(response, onProgress) {
       if (chunk.trim() === "") return;
       try {
         const data = JSON.parse(chunk.replace("data: ", ""));
+
+        // Check for error in stream data
+        if (data.error) {
+          $("#loading-indicator").hide();
+          $("#exam-results").append(`<div class="error-message">${data.error}</div>`);
+          return; // Skip further processing of this chunk
+        }
+
         onProgress(data);
       } catch (e) {
         console.error("Error parsing chunk:", e);

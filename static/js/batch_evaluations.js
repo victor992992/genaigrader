@@ -94,7 +94,30 @@ function processBatchEvalChunk(chunk) {
   try {
     const data = JSON.parse(chunk.replace("data: ", ""));
     if (data.error) {
-      $("#batch-eval-errors").append(`<div class="batch-eval-error">${data.error}</div>`);
+      // Add a row to the table indicating that there was an error
+      const lastRow = window._batchEvalLastRow || {};
+      const now = new Date();
+      const datetimeStr = now.toLocaleString();
+      const evalId = window._lastEvalId || '';
+      const headingLink = `<a href="#${evalId}" class="details-link" title="View details"><span class="details-icon" aria-label="Details">🔍</span></a>`;
+
+      $("#batch-eval-table").show();
+      $("#batch-eval-table tbody").append(
+        `<tr class="batch-eval-error-row">
+          <td data-label="Date">${headingLink} ${datetimeStr}</td>
+          <td data-label="Model">${lastRow.model||''}</td>
+          <td data-label="Subject">${lastRow.subject||''}</td>
+          <td data-label="Exam">${lastRow.exam||''}</td>
+          <td data-label="Repetition">${lastRow.repetition||''}</td>
+          <td data-label="Grade">Error</td>
+          <td data-label="Time">-</td>
+        </tr>`
+      );
+
+      const errorMsg = `Evaluating <b>${lastRow.model}</b> on <b>${lastRow.subject}</b> with <b>${lastRow.exam}</b> (Repetition ${lastRow.repetition}/${lastRow.totalReps}): ${data.error}`;
+      $("#batch-eval-errors").append(`<div class="batch-eval-error">${errorMsg}</div>`);
+
+
     } else if (data.progress) {
       const progress = parseProgress(data.progress);
       if (progress) {

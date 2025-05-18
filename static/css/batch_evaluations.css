@@ -1,4 +1,32 @@
 /* Styles for batch evaluations page */
+
+/* ----- Layout & Container Styles ----- */
+.batch-eval-flex {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.batch-eval-col {
+  flex: 1 1 300px;
+  min-width: 250px;
+}
+
+.batch-eval-form-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1.2em;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+
+.batch-eval-form-row label {
+  margin-bottom: 0;
+  white-space: nowrap;
+  align-self: baseline;
+}
+
 .batch-eval-btn-row {
   display: flex;
   align-items: baseline;
@@ -6,66 +34,15 @@
   margin-bottom: 0;
 }
 
-@media (max-width: 600px) {
-  .batch-eval-btn-row {
-    flex-direction: row;
-    align-items: stretch;
-    gap: 0.5em;
-  }
-}
-
-.exam-detail-heading-margin {
+.back-to-top-link-container {
   margin-top: 1em;
-  margin-bottom: 0.5em;
-}
-.exam-detail-box {
-  border: 1px solid #ccc;
-  padding: 8px;
-  margin: 8px 0;
-  border-radius: 4px;
-}
-.exam-detail-box pre {
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-.model-response-text {
-  font-weight: bold;
-}
-.correct-response {
-  color: green;
-}
-.incorrect-response {
-  color: red;
-}
-.correctness-icon {
-  margin-left: 1em;
-}
-.question-time {
-  font-size: 0.9em;
-  color: #888;
+  margin-bottom: 2em;
+  text-align: right;
 }
 
-.progress-bar-custom {
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 1em;
-  background-color: #4caf50;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 60px;
-  min-height: 24px;
-}
-
-.batch-eval-error {
-  color: red;
-}
-.batch-eval-progress-detail {
-  font-size: 1.1em;
-  margin-top: 0.5em;
+/* ----- Form Control Styles ----- */
+.batch-eval-label {
+  font-weight: 600;
 }
 
 .batch-eval-select {
@@ -98,28 +75,6 @@
   background: #f8f9fa;
 }
 
-/* Responsive for smaller screens */
-@media (max-width: 600px) {
-  .batch-eval-select {
-    min-height: 180px;
-    font-size: 1em;
-  }
-}
-
-.batch-eval-form-row {
-  display: flex;
-  align-items: baseline;
-  gap: 1.2em;
-  margin-top: 1.5em;
-  margin-bottom: 1.5em;
-}
-
-.batch-eval-form-row label {
-  margin-bottom: 0;
-  white-space: nowrap;
-  align-self: baseline;
-}
-
 .batch-eval-form-row input[type="number"] {
   width: 80px;
   margin-bottom: 0;
@@ -134,47 +89,29 @@
   margin-bottom: 0;
 }
 
+.batch-eval-reps input[type="number"] {
+  width: 80px;
+  padding: 0.4rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  margin-left: 0.5rem;
+}
+
+/* ----- Button Styles ----- */
 .batch-eval-btn {
   flex: 0 0 auto;
   align-self: baseline;
-}
-
-.batch-eval-count-indicator {
-  flex: 0 0 auto;
-  align-self: baseline;
-}
-
-@media (max-width: 800px) {
-  .batch-eval-form-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.7em;
-  }
-  .batch-eval-form-row label,
-  .batch-eval-form-row input[type="number"] {
-    width: 100%;
-  }
-  .batch-eval-btn-row {
-    flex-direction: row;
-    align-items: stretch;
-    gap: 0.5em;
-  }
-}
-
-.details-link, .details-icon {
-  text-decoration: none;
+  padding: 0.7rem 2rem;
+  border-radius: 8px;
+  background: var(--primary-color);
+  color: var(--text-color);
+  font-weight: 600;
   border: none;
-  background: none;
-  color: inherit;
+  font-size: 1.1em;
   cursor: pointer;
+  transition: background 0.2s;
 }
-.details-link:hover .details-icon {
-  filter: brightness(1.2);
-}
-.no-underline {
-  text-decoration: none !important;
-  color: var(--primary-text, #007bff);
-}
+
 .back-to-top-link {
   font-weight: bold;
   font-size: 1em;
@@ -184,16 +121,248 @@
   color: var(--primary-text, #007bff);
   transition: background 0.2s;
 }
+
 .back-to-top-link:hover {
   background: var(--background-hover, #e0e0e0);
   color: var(--primary-text, #0056b3);
 }
-.back-to-top-link-container {
-  margin-top: 1em;
-  margin-bottom: 2em;
-  text-align: right;
+
+.details-link, .details-icon {
+  text-decoration: none;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
 }
 
+.details-link:hover .details-icon {
+  filter: brightness(1.2);
+}
+
+.no-underline {
+  text-decoration: none !important;
+  color: var(--primary-text, #007bff);
+}
+
+/* ----- Table Styles ----- */
+.batch-eval-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem auto;
+  background: var(--background-medium);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.batch-eval-table th,
+.batch-eval-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.batch-eval-table th {
+  background-color: var(--secondary-color);
+  font-weight: 600;
+}
+
+.batch-eval-table tbody tr:nth-child(even) {
+  background: var(--background-dark);
+}
+
+.batch-eval-table tbody tr:hover {
+  background: #1e40af;
+}
+
+/* Error row styling with sufficient specificity */
+.batch-eval-table tbody tr.batch-eval-error-row {
+  background-color: #ffebee; /* Light red background */
+}
+
+.batch-eval-table tbody tr.batch-eval-error-row td {
+  color: #c62828; /* Dark red text */
+}
+
+.batch-eval-table tbody tr.batch-eval-error-row:hover {
+  background-color: #ffcdd2; /* Slightly darker red on hover */
+}
+
+/* ----- Progress & Status Indicators ----- */
+.batch-eval-count-indicator {
+  flex: 0 0 auto;
+  align-self: baseline;
+  margin-bottom: 1.2rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  font-size: 1.08em;
+}
+
+.batch-eval-loading-indicator {
+  display: none;
+  text-align: center;
+}
+
+.batch-eval-progress-bar-container {
+  width: 100%;
+  background-color: #eee;
+  border-radius: 12px;
+  margin-top: 1rem;
+}
+
+.batch-eval-progress-bar {
+  width: 0%;
+  height: 24px;
+  background-color: #4caf50;
+  border-radius: 10px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.5s ease;
+}
+
+.batch-eval-progress-detail {
+  font-size: 1.1em;
+  margin-top: 0.5em;
+}
+
+.batch-eval-error {
+  color: red;
+}
+
+.progress-bar-custom {
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1em;
+  background-color: #4caf50;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  min-height: 24px;
+}
+
+/* ----- Exam Detail Styles ----- */
 .eval-details-section {
-  scroll-margin-top: 90px; /* Adjust this value to match or slightly exceed your header height */
+  scroll-margin-top: 90px; /* Adjust to match header height */
+}
+
+.exam-detail-heading-margin {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.exam-detail-box {
+  border: 1px solid #ccc;
+  padding: 8px;
+  margin: 8px 0;
+  border-radius: 4px;
+}
+
+.exam-detail-box pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.model-response-text {
+  font-weight: bold;
+}
+
+.correct-response {
+  color: green;
+}
+
+.incorrect-response {
+  color: red;
+}
+
+.correctness-icon {
+  margin-left: 1em;
+}
+
+.question-time {
+  font-size: 0.9em;
+  color: #888;
+}
+
+/* ----- Responsive Styles ----- */
+@media (max-width: 800px) {
+  .batch-eval-form-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.7em;
+  }
+
+  .batch-eval-form-row label,
+  .batch-eval-form-row input[type="number"] {
+    width: 100%;
+  }
+
+  .batch-eval-btn-row {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0.5em;
+  }
+}
+
+@media (max-width: 768px) {
+  .batch-eval-table th,
+  .batch-eval-table td {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .batch-eval-table,
+  .batch-eval-table thead,
+  .batch-eval-table tbody,
+  .batch-eval-table th,
+  .batch-eval-table td,
+  .batch-eval-table tr {
+    display: block;
+  }
+
+  .batch-eval-table th {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  .batch-eval-table td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+    min-height: 2.2em;
+  }
+  
+  .batch-eval-table td:before {
+    position: absolute;
+    top: 0;
+    left: 0.8em;
+    width: 45%;
+    white-space: nowrap;
+    font-weight: bold;
+    color: #888;
+    content: attr(data-label);
+  }
+}
+
+@media (max-width: 600px) {
+  .batch-eval-btn-row {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0.5em;
+  }
+
+  .batch-eval-select {
+    min-height: 180px;
+    font-size: 1em;
+  }
 }
