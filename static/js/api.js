@@ -89,7 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (response.ok) {
                         const newRow = `
                         <tr data-id="${data.model.id}">
-                            <td>External</td>
                             <td data-full-value="${data.model.description}">${data.model.description}</td>
                             <td data-full-value="${data.model.api_url}">${data.model.api_url}</td>
                             <td data-full-value="${data.model.api_key}">${data.model.api_key.length > 10 ? data.model.api_key.substring(0,7) + '...' : data.model.api_key}</td>
@@ -99,8 +98,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             </td>
                         </tr>
                     `;
-                document.querySelector('#model-table tbody').insertAdjacentHTML('afterbegin', newRow);
-                
+                document.querySelector('#model-table tbody').insertAdjacentHTML('beforeend', newRow);
+               
                 document.getElementById('creation-form').style.display = 'none';
                 document.getElementById('desc').value = '';
                 document.getElementById('url').value = '';
