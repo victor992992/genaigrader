@@ -37,6 +37,9 @@ def update_model(request, model_id):
 def delete_model(request, model_id):
     try:
         model = get_object_or_404(Model, id=model_id)
+
+        if not model.is_external and not request.user.is_superuser:
+            return JsonResponse({'status': 'error', 'message': 'Permission denied. Only superusers can delete models.'}, status=403)
         model.delete()
         return JsonResponse({'status': 'success'})
     except Exception as e:
