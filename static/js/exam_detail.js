@@ -110,10 +110,30 @@ document.addEventListener('DOMContentLoaded', function () {
     const gradeBarColour = '59,130,246';
     const timeBarColour = '255,99,132';
 
-    const calculateRange = (data) => ({
-        min: Math.min(...data.map(d => d.yMin)),
-        max: Math.max(...data.map(d => d.yMax)) + 2
-    });
+    const calculateRange = (data) => {
+        const yValues = data.flatMap(d => [d.yMin, d.avg, d.yMax]);
+        
+        if (yValues.length === 0) return { min: -1, max: 1 }; 
+        
+        const globalMin = Math.min(...yValues);
+        const globalMax = Math.max(...yValues);
+        
+    
+        if (globalMin === globalMax) {
+            const buffer = Math.abs(globalMin) * 0.5 || 1; 
+            return {
+                min: globalMin - buffer,
+                max: globalMax + buffer
+            };
+        }
+        
+    
+        const rangeBuffer = (globalMax - globalMin) * 0.2;
+        return {
+            min: globalMin - rangeBuffer,
+            max: globalMax + rangeBuffer
+        };
+    }
 
     const createErrorBarChart = (canvas, data, field, title, color, decimals = 2) => {
         const yRange = calculateRange(data);
