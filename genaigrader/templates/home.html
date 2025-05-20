@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Genaigrader - Home{% endblock %}
+{% block content %}
+<div class="home-container">
+  <h1 class="home-title">Genaigrader</h1>
+  <p class="home-description">
+    Genaigrader is an AI-powered platform for automated batch evaluation of exams using both local and remote language models. It streamlines the grading process and provides analytics. You can select local models (served in this server by Ollama) or connect to remote models (from an external provider, with your own credentials) for evaluation.
+  </p>
+  <h2 class="home-section-title">Quick Start</h2>
+  <ol class="home-manual-list">
+    <li>Register or log in to your account.<br>
+      <a href="/accounts/login/" class="home-link">Login</a> | <a href="/accounts/signup/" class="home-link">Sign up</a>
+    </li>
+    <li>You can download local models and add external models in the <a href="/api/" class="home-link">Models</a> section.
+        To connect to a remote model, you will need to provide the following data:
+      <ul class="home-format-list">
+        <li><strong>API URL</strong>: The endpoint of the remote model (e.g., <code>https://generativelanguage.googleapis.com/v1beta/openai/</code>).</li>
+        <li><strong>API Key</strong>: Your authentication token for the remote service. This is stored in Genaigrader's database, but is not shared with other users.</li>
+        <li><strong>Model Name</strong>: The identifier of the model to use.</li>
+      </ul>
+      <p>Example of a remote model configuration:</p>
+      <pre class="home-format-example">API URL: https://generativelanguage.googleapis.com/v1beta/openai/  
+API Key: sk-1234567890abcdef
+Model Name: gemini-2.0-flash-lite-001</pre>
+      <p>Note: Ensure that the remote model is compatible with OpenAI's API. You can get free access to Google's Gemini models, which provide a OpenAI's compatible endpoint, through <a href="https://aistudio.google.com/" target="_blank" class="home-link">Google AI Studio</a>.
+    </li>
+    <li>Upload exam files and define exam details in the <a href="/evaluate/" class="home-link">Exam section</a>.<br>
+      <br><strong>Exam input format:</strong> Each exam file must be a plain text file (.txt) with the following structure:
+      <ul class="home-format-list">
+        <li>Each question statement is one or more lines, followed by the first option (e.g., <code>A)</code>).</li>
+        <li>Options must be listed as <code>A)</code>, <code>B)</code>, <code>C)</code>, etc., each on its own line. You can use numbers or letters (e.g., <code>1)</code>, <code>2)</code>, <code>a)</code>, <code>b)</code>) for options.</li>
+        <li>After the last option, leave a blank line, then write the correct option letter (e.g., <code>A</code> or <code>B</code>) on a new line.</li>
+        <li>Questions are separated by a blank line after the correct answer.</li>
+        <li>Example:<br>
+          <pre class="home-format-example">¿Cuál es la capital de Francia?
+A) Madrid
+B) París
+C) Berlín
+
+a
+
+¿Cuánto es 2+2?
+A) 3
+B) 4
+C) 5
+
+b
+</pre>
+        </li>
+      </ul>
+      When you upload an exam, it has to be assigned a course. You can create a new course or select an existing one. The course name must be unique. The <a href="/course/" class="home-link">Manage Courses</a> sections allows you to view, edit, or delete courses. You can also view the list of exams associated with each course.<br>
+    </li>
+    <li>Navigate to <a href="/batch-evaluations/" class="home-link">Batch Evaluations</a> to select exams and models for evaluation. You can choose from available models.</li>
+    <li>Set the number of repetitions and launch the batch evaluation.</li>
+    <li>Monitor progress and view results in the <a href="/batch-evaluations/" class="home-link">results table</a>.</li>
+    <li>Analyze results and download reports as needed. For more details, visit the <a href="/analysis/" class="home-link">Analysis</a> section.</li>
+  </ol>
+  <p class="home-note">For more details, see the documentation or contact the administrator.</p>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}

@@ -1,0 +1,59 @@
+.home-container {
+  max-width: 700px;
+  margin: 2em auto;
+  padding: 2em;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+.home-title {
+  font-size: 2.5em;
+  margin-bottom: 0.5em;
+  color: #2a3a4b;
+}
+.home-description {
+  font-size: 1.2em;
+  margin-bottom: 1.5em;
+  color: #444;
+}
+.home-section-title {
+  font-size: 1.3em;
+  margin-top: 1.5em;
+  margin-bottom: 0.7em;
+  color: #2a3a4b;
+}
+.home-manual-list {
+  margin-left: 1.5em;
+  margin-bottom: 1.5em;
+  color: #333;
+}
+.home-note {
+  font-size: 1em;
+  color: #888;
+  margin-top: 1em;
+}
+.home-format-list {
+  margin-left: 1.5em;
+  color: #333;
+  font-size: 1em;
+}
+.home-format-example {
+  background: #f7f7f7;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  padding: 0.7em 1em;
+  font-family: monospace;
+  font-size: 1em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  display: inline-block;
+}
+.home-link {
+  color: #1a73e8;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+.home-link:hover {
+  color: #0c47a1;
+  text-decoration: underline;
+}
