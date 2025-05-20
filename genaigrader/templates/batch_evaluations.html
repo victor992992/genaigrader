@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<h2>Batch Evaluations</h2>
+{% block title %}Genaigrader - Batch Evaluate{% endblock %}
+{% block header %}Genaigrader - Batch Evaluate{% endblock %}
+
+<h2>Batch Evaluate</h2>
 <a id="top"></a>
 <form id="batch-eval-form" method="post">
     {% csrf_token %}
