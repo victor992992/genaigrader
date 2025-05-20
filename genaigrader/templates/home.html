@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Genaigrader - Home{% endblock %}
+{% block header %}Genaigrader - Home{% endblock %}
+
 {% block content %}
 <div class="home-container">
   <h1 class="home-title">Genaigrader</h1>
@@ -56,7 +58,6 @@ b
     <li>Monitor progress and view results in the <a href="/batch-evaluations/" class="home-link">results table</a>.</li>
     <li>Analyze results and download reports as needed. For more details, visit the <a href="/analysis/" class="home-link">Analysis</a> section.</li>
   </ol>
-  <p class="home-note">For more details, see the documentation or contact the administrator.</p>
 </div>
 {% endblock %}
 
