@@ -15,7 +15,7 @@
                 {% for subject, exams in subjects_with_exams.items %}
                   <optgroup label="{{ subject.name }}">
                     {% for exam in exams %}
-                      <option value="{{ exam.id }}">{{ exam.description }}</option>
+                      <option value="{{ exam.id }}">{{ exam.description }} ({{ exam.eval_count }} evals)</option>
                     {% endfor %}
                   </optgroup>
                 {% endfor %}
@@ -27,14 +27,14 @@
                 {% if local_models %}
                   <optgroup label="Local Models">
                     {% for model in local_models %}
-                      <option value="{{ model.id }}">{{ model }}</option>
+                      <option value="{{ model.id }}">{{ model }} ({{ model.eval_count }} evals)</option>
                     {% endfor %}
                   </optgroup>
                 {% endif %}
                 {% if external_models %}
                   <optgroup label="Remote Models">
                     {% for model in external_models %}
-                      <option value="{{ model.id }}">{{ model }}</option>
+                      <option value="{{ model.id }}">{{ model }} ({{ model.eval_count }} evals)</option>
                     {% endfor %}
                   </optgroup>
                 {% endif %}

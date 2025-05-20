@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from genaigrader.models import Course, Exam, Model
@@ -123,7 +124,8 @@ def batch_stream(exams_to_eval: Iterable, models_to_eval: Iterable, repetitions:
             yield f"data: {json.dumps({'progress': progress_msg})}\n\n"
 
             responses = []
-            for chunk in stream_responses(questions, '', llm, len(questions), exam):
+            user_prompt = ""
+            for chunk in stream_responses(questions, user_prompt, llm, len(questions), exam):
                 responses.append(chunk)
                 logging.info(f"Yielding chunk: {chunk[:100]}")
                 yield chunk
@@ -184,10 +186,15 @@ def batch_evaluations_view(request):
     """
     user = request.user
     exams = Exam.objects.filter(user=user)
+    exams = exams.annotate(eval_count=Count('evaluation'))
     courses = Course.objects.filter(user=user)
 
  
     local_models, external_models = get_models_for_user(user)
+
+    # Annotate models with evaluation count
+    local_models = local_models.annotate(eval_count=Count('evaluation'))
+    external_models = external_models.annotate(eval_count=Count('evaluation'))
 
     # Group exams by course
     courses_with_exams = {}

@@ -6,6 +6,9 @@ from django.utils import timezone
 from genaigrader.models import Evaluation, QuestionEvaluation
 from genaigrader.services.evaluation_service import generate_prompt
 
+# Set logging level to INFO
+logging.basicConfig(level=logging.INFO)
+
 def stream_responses(questions, user_prompt, llm, total_questions, exam):
     """
     Streams evaluation results for each question, yielding JSON-encoded progress updates.
@@ -103,9 +106,9 @@ def process_question(correct_count, index, question, user_prompt, llm, total_que
     - dict: A dictionary containing processed question data and result.
     """
     prompt_data = generate_prompt(question, user_prompt)
-    logging.info(f"Question prompt: {prompt_data['question_prompt']}")
+    logging.info(f"Question prompt: {prompt_data['prompt']}")
     llm_response_list = list(llm.generate_response(prompt_data['prompt']))
-    logging.info(f"LLM response: {''.join(llm_response_list)}")
+    logging.info(f"LLM response: {''.join(llm_response_list)}\n")
 
     if not llm_response_list:
         # An example of a case where the LLM doesn't return any response
