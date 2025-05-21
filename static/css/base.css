@@ -99,7 +99,6 @@ body {
 /* Botones de navegación */
 .boton[href*="evaluate"],
 .boton[href*="course"],
-.boton[href*="reevaluate"],
 .boton[href*="analysis"],
 .boton[href*="batch-evaluations"],
 .boton[href*="api"] {
@@ -111,7 +110,6 @@ body {
 
 .boton[href*="evaluate"]:hover,
 .boton[href*="course"]:hover,
-.boton[href*="reevaluate"]:hover,
 .boton[href*="analysis"]:hover,
 .boton[href*="batch-evaluations"]:hover,
 .boton[href*="api"]:hover {

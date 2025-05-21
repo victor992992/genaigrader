@@ -20,7 +20,6 @@ from django.contrib.auth import views as auth_views
 from genaigrader.views.auth_views import signup  
 from genaigrader.views.course_views import course_view, update_course, delete_course, delete_exam, update_exam, export_all_evaluations, export_course_evaluations
 from genaigrader.views.evaluate_views import evaluate_view, upload_file
-from genaigrader.views.reevaluate_views import reevaluate_view, reevaluate_exam
 from genaigrader.views.batch_evaluations_view import batch_evaluations_view
 from genaigrader.views.exam_details_view import exam_detail, delete_evaluation
 from genaigrader.views.analysis_view import analysis_view
@@ -39,8 +38,6 @@ urlpatterns = [
     path('evaluate/', evaluate_view, name='evaluate'),
     path('course/', course_view, name='course'),
     path('upload/', upload_file, name='upload_file'),
-    path('reevaluate/', reevaluate_view, name='reevaluate'),
-    path('reevaluate/process/', reevaluate_exam, name='reevaluate_process'),
     path('exam/<int:exam_id>/', exam_detail, name='exam_detail'),
     path('analysis/', analysis_view, name='analysis'),
     path('api/', api_view, name='api'),
