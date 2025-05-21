@@ -1,13 +1,15 @@
-<label for="model-select">AI Model:</label>
-<select id="model-select" name="model">
-  <optgroup label="Local Models">
-    {% for model in local_models %}
-      <option value="{{ model.description }}">{{ model.description }}</option>
-    {% endfor %}
-  </optgroup>
-  <optgroup label="External Models">
-    {% for model in external_models %}
-      <option value="{{ model.description }}">{{ model.description }}</option>
-    {% endfor %}
-  </optgroup>
-</select>
+<div class="form-section">
+  <label for="model-select">AI Model:</label>
+  <select id="model-select" name="model">
+    <optgroup label="Local Models">
+      {% for model in local_models %}
+        <option value="{{ model.description }}">{{ model.description }}</option>
+      {% endfor %}
+    </optgroup>
+    <optgroup label="External Models">
+      {% for model in external_models %}
+        <option value="{{ model.description }}">{{ model.description }}</option>
+      {% endfor %}
+    </optgroup>
+  </select>
+</div>

@@ -245,6 +245,7 @@
   font-weight: 600;
   letter-spacing: 0.5px;
 }
+
 /* Responsive */
 @media (max-width: 768px) {
   .batch-eval-flex {
