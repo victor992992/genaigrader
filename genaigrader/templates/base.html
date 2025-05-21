@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>{% block title %}Genaigrader{% endblock %}</title>
+  <title>{% block title %}GenAI Grader{% endblock %}</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -11,7 +11,7 @@
 </head>
 <body>
   <div id="menu-bar">
-    <h1>{% block header %}Django App{% endblock %}</h1>
+    <h1>{% block header %}GenAI Grader{% endblock %}</h1>
     <div>
       {% if user.is_authenticated %}
         <span>Hello, {{ user.username }}!</span>

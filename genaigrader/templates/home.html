@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Genaigrader - Home{% endblock %}
-{% block header %}Genaigrader - Home{% endblock %}
+{% block title %}GenAI Grader - Home{% endblock %}
+{% block header %}GenAI Grader - Home{% endblock %}
 
 {% block content %}
 <div class="home-container">
-  <h1 class="home-title">Genaigrader</h1>
+  <h1 class="home-title">GenAI Grader</h1>
   <p class="home-description">
-    Genaigrader is an AI-powered platform for automated batch evaluation of exams using both local and remote language models. It streamlines the grading process and provides analytics. You can select local models (served in this server by Ollama) or connect to remote models (from an external provider, with your own credentials) for evaluation.
+    GenAI Grader is an AI-powered platform for automated batch evaluation of exams using both local and remote language models. It streamlines the grading process and provides analytics. You can select local models (served in this server by Ollama) or connect to remote models (from an external provider, with your own credentials) for evaluation.
   </p>
   <h2 class="home-section-title">Quick Start</h2>
   <ol class="home-manual-list">
@@ -18,7 +18,7 @@
         To connect to a remote model, you will need to provide the following data:
       <ul class="home-format-list">
         <li><strong>API URL</strong>: The endpoint of the remote model (e.g., <code>https://generativelanguage.googleapis.com/v1beta/openai/</code>).</li>
-        <li><strong>API Key</strong>: Your authentication token for the remote service. This is stored in Genaigrader's database, but is not shared with other users.</li>
+        <li><strong>API Key</strong>: Your authentication token for the remote service. This is stored in GenAI Grader's database, but is not shared with other users.</li>
         <li><strong>Model Name</strong>: The identifier of the model to use.</li>
       </ul>
       <p>Example of a remote model configuration:</p>
