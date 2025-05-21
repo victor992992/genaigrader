@@ -83,13 +83,14 @@ def extract_summary(responses: List[str]) -> Dict[str, Any] | None:
             continue
     return None
 
-def batch_stream(exams_to_eval: Iterable, models_to_eval: Iterable, repetitions: int) -> Generator[str, None, None]:
+def batch_stream(exams_to_eval: Iterable, models_to_eval: Iterable, repetitions: int, user_prompt: str) -> Generator[str, None, None]:
     """
     Streams batch evaluation results for all combinations of exams, models, and repetitions.
     Args:
         exams_to_eval: Iterable of Exam objects to evaluate.
         models_to_eval: Iterable of Model objects to evaluate.
         repetitions: Number of repetitions for each combination.
+        user_prompt: User-provided prompt to use for all evaluations.
     Yields:
         String chunks for streaming HTTP response.
     """
@@ -124,7 +125,6 @@ def batch_stream(exams_to_eval: Iterable, models_to_eval: Iterable, repetitions:
             yield f"data: {json.dumps({'progress': progress_msg})}\n\n"
 
             responses = []
-            user_prompt = ""
             for chunk in stream_responses(questions, user_prompt, llm, len(questions), exam):
                 responses.append(chunk)
                 logging.info(f"Yielding chunk: {chunk[:100]}")
@@ -157,19 +157,21 @@ def handle_batch_evaluations_post(request, user, exams, models):
         selected_exam_ids = data.get('exams[]', [])
         selected_model_ids = data.get('models[]', [])
         repetitions = int(data.get('repetitions', 1))
+        user_prompt = data.get('user_prompt', '')
     else:
         selected_exam_ids = request.POST.getlist('exams[]')
         selected_model_ids = request.POST.getlist('models[]')
         repetitions = int(request.POST.get('repetitions', 1))
+        user_prompt = request.POST.get('user_prompt', '')
 
-    logging.warning(f'selected_exam_ids: {selected_exam_ids}, selected_model_ids: {selected_model_ids}, repetitions: {repetitions}')
+    logging.warning(f'selected_exam_ids: {selected_exam_ids}, selected_model_ids: {selected_model_ids}, repetitions: {repetitions}, user_prompt: {user_prompt}')
 
     exams_to_eval = exams.filter(id__in=selected_exam_ids)
     models_to_eval = [m for m in models if str(m.id) in selected_model_ids]
     logging.warning(f'exams_to_eval: {[e.id for e in exams_to_eval]}, models_to_eval: {[m.id for m in models_to_eval]}')
 
     return StreamingHttpResponse(
-        batch_stream(exams_to_eval, models_to_eval, repetitions),
+        batch_stream(exams_to_eval, models_to_eval, repetitions, user_prompt),
         content_type="text/event-stream"
     )
 

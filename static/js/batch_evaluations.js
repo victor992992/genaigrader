@@ -257,6 +257,13 @@ function processBatchEvalChunk(chunk) {
 }
 
 $(document).ready(function () {
+  // Prevent Enter in user prompt textarea from submitting the form
+  $('#user-prompt').on('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    }
+  });
+
   $("#batch-eval-form").submit(function (event) {
     event.preventDefault(); // Prevent default form submission
 
