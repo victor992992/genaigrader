@@ -1,59 +1,108 @@
+/* home.css - Tema Oscuro Azul */
 .home-container {
   max-width: 700px;
   margin: 2em auto;
   padding: 2em;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  background: var(--background-medium);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
 }
+
 .home-title {
-  font-size: 2.5em;
+  font-size: 2.5rem;
   margin-bottom: 0.5em;
-  color: #2a3a4b;
+  color: var(--primary-color);
+  font-weight: 600;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
 .home-description {
-  font-size: 1.2em;
+  font-size: 1.2rem;
   margin-bottom: 1.5em;
-  color: #444;
+  color: var(--text-light);
+  line-height: 1.7;
+  text-align: center;
 }
+
 .home-section-title {
-  font-size: 1.3em;
-  margin-top: 1.5em;
-  margin-bottom: 0.7em;
-  color: #2a3a4b;
+  font-size: 1.5rem;
+  margin-top: 2em;
+  margin-bottom: 1em;
+  color: var(--primary-color);
+  font-weight: 500;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.5em;
 }
+
 .home-manual-list {
   margin-left: 1.5em;
   margin-bottom: 1.5em;
-  color: #333;
+  color: var(--text-light);
+  line-height: 1.8;
+  list-style-type: square;
 }
+
+.home-manual-list li {
+  margin-bottom: 0.8em;
+}
+
 .home-note {
-  font-size: 1em;
-  color: #888;
-  margin-top: 1em;
+  font-size: 1rem;
+  color: var(--text-light);
+  margin-top: 2em;
+  padding: 1em;
+  background: var(--background-dark);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
 }
+
 .home-format-list {
   margin-left: 1.5em;
-  color: #333;
-  font-size: 1em;
+  color: var(--text-light);
+  font-size: 1rem;
+  list-style-type: circle;
 }
+
 .home-format-example {
-  background: #f7f7f7;
-  border: 1px solid #e0e0e0;
-  border-radius: 5px;
-  padding: 0.7em 1em;
-  font-family: monospace;
-  font-size: 1em;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  display: inline-block;
+  background: var(--background-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1em;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  margin: 1em 0;
+  display: block;
+  white-space: pre-wrap;
+  color: var(--text-color);
 }
+
 .home-link {
-  color: #1a73e8;
-  text-decoration: underline;
-  transition: color 0.2s;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-bottom: 2px dotted var(--primary-color);
 }
+
 .home-link:hover {
-  color: #0c47a1;
-  text-decoration: underline;
+  color: var(--secondary-color);
+  border-bottom-style: solid;
+}
+
+/* Ajustes para móviles */
+@media (max-width: 768px) {
+  .home-container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .home-title {
+    font-size: 2rem;
+  }
+  
+  .home-description {
+    font-size: 1.1rem;
+  }
 }
