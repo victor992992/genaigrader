@@ -10,4 +10,5 @@ dependencies = [
     "openai>=1.78.1",
     "packaging>=25.0",
     "requests>=2.32.3",
+    "whitenoise>=6.9.0",
 ]
