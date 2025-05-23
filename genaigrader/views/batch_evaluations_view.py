@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from genaigrader.models import Course, Exam, Model
@@ -188,15 +188,15 @@ def batch_evaluations_view(request):
     """
     user = request.user
     exams = Exam.objects.filter(user=user)
-    exams = exams.annotate(eval_count=Count('evaluation'))
+    exams = exams.annotate(eval_count=Count('evaluation', filter=Q(evaluation__exam__user=user)))
     courses = Course.objects.filter(user=user)
 
  
     local_models, external_models = get_models_for_user(user)
 
-    # Annotate models with evaluation count
-    local_models = local_models.annotate(eval_count=Count('evaluation'))
-    external_models = external_models.annotate(eval_count=Count('evaluation'))
+    # Annotate models with evaluation count, but only count evaluations by the current user
+    local_models = local_models.annotate(eval_count=Count('evaluation', filter=Q(evaluation__exam__user=user)))
+    external_models = external_models.annotate(eval_count=Count('evaluation', filter=Q(evaluation__exam__user=user)))
 
     # Group exams by course
     courses_with_exams = {}
