@@ -6,6 +6,22 @@
 
 <h2>Batch Evaluate</h2>
 <a id="top"></a>
+
+{% comment %} Show message if no exams or models are available {% endcomment %}
+{% if not subjects_with_exams %}
+  <div class="batch-eval-warning">
+    No exams found. Please upload an exam in the <a href="/evaluate/" class="batch-eval-link">Evaluate</a> section first.
+  </div>
+{% endif %}
+{% if not local_models and not external_models %}
+  <div class="batch-eval-warning">
+    No models found. Please add or configure a model in the <a href="/evaluate/" class="batch-eval-link">Evaluate</a> section first.
+  </div>
+{% endif %}
+
+{# Only show the form if there are exams and models #}
+{% if subjects_with_exams %}
+  {% if local_models or external_models %}
 <form id="batch-eval-form" method="post">
     {% csrf_token %}
     <div class="batch-eval-flex">
@@ -83,6 +99,8 @@
   </tbody>
 </table>
 <div id="exam-details"></div>
+  {% endif %}
+{% endif %}
 {% endblock %}
 
 {% block extra_scripts %}
