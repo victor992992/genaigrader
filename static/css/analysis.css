@@ -93,8 +93,8 @@
 }
 
 .course-charts {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 1.5rem;
     margin-top: 1rem;
 }
@@ -142,8 +142,8 @@
 }
 
 .overall-charts {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 2rem;
     margin-top: 2rem;
 }

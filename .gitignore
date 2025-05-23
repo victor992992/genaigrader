@@ -143,3 +143,9 @@ uploaded_files/*
 # But keep the .gitkeep file so that the directory is present,
 # because it's needed in the deployment process
 !uploaded_files/.gitkeep
+
+# Ignore files for deployment
+staticfiles/
+gunicorn.pid
+ollama.pid
+.env.django
