@@ -87,7 +87,7 @@
 }
 
 .home-link:hover {
-  color: var(--secondary-color);
+  color: var(--link-hover-color);
   border-bottom-style: solid;
 }
 
