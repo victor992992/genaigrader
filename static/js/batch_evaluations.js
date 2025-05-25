@@ -67,14 +67,32 @@ function handleBatchEvalStream(response) {
     $("#batch-eval-results").html("Error starting batch evaluation.");
     throw new Error("Network response was not ok");
   }
+
   const reader = response.body.getReader();
   const decoder = new TextDecoder("utf-8");
   let buffer = '';
+  window._batchEvalFinished = false; // To detect if the stream finished normally
+
   function processStream({ done, value }) {
     if (done) {
       $("#loading-indicator").hide();
+
+      // If the "done" message was not received, we assume the stream was interrupted
+      if (!window._batchEvalFinished) {
+        const now = new Date();
+        const datetimeStr = now.toLocaleString();
+        $("#batch-eval-errors").append(
+          `<div class="batch-eval-error">
+            <span class="batch-eval-error-date">${datetimeStr}</span>
+            Evaluation stream was interrupted or did not finish properly.
+            Please check the server logs for more details.
+          </div>`
+        );
+      }
+
       return;
     }
+
     buffer += decoder.decode(value, { stream: true });
     const chunks = buffer.split("\n\n");
     buffer = chunks.pop() || '';
@@ -241,6 +259,7 @@ function processBatchEvalChunk(chunk) {
       }
     } else if (data.done) {
       // Do not clear or append, just mark finished
+      window._batchEvalFinished = true; // Mark as finished correctly
       let finishedMsg = "Batch evaluation finished.";
       if (window._batchEvalStartTime) {
         const elapsedMs = Date.now() - window._batchEvalStartTime;

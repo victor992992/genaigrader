@@ -178,6 +178,16 @@
   font-weight: 500;
 }
 
+.batch-eval-error {
+  color: var(--error-color);
+  font-weight: bold;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  border: 1px solid var(--error-color);
+}
+
 /* Progress Bar Animada */
 .batch-eval-progress-bar {
   
