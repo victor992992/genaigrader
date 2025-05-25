@@ -63,6 +63,7 @@ tmux send-keys -t "$SESSION_NAME" "uv run gunicorn $GUNICORN_APP \
     --bind $GUNICORN_SOCKET \
     --log-file $LOGFILE \
     --pid gunicorn.pid \
+    --timeout 6000 \
     --env DJANGO_SETTINGS_MODULE=$SETTINGS_MODULE > /dev/null 2>&1 &" C-m
 
 echo "🟢 App running at: https://$NGROK_URL"
