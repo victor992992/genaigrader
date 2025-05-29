@@ -1,5 +1,5 @@
 from typing import List, Dict
-from ..models import Question, QuestionOption, Exam
+from ..models import Exam
 import re
 
 def create_exam(uploaded_file, course, user, request):
@@ -29,7 +29,7 @@ def process_exam_file(file_path) -> List[Dict]:
 
             if state == "statement":
                 if stripped_line and re.match(r'^[a-zA-Z]\)', stripped_line):
-                    if not statement:  # Validar que hay enunciado
+                    if not statement:  # Validate that there is a statement
                         raise ValueError(f"Line {line_number}: Question missing statement")
                     
                     current_question = {
@@ -40,12 +40,12 @@ def process_exam_file(file_path) -> List[Dict]:
                     state = "options"
                     statement = []
                 else:
-                    if stripped_line:  # Ignorar líneas vacías en el enunciado
+                    if stripped_line:  # Ignore blank lines in the statement
                         statement.append(stripped_line)
 
             elif state == "options":
                 if not stripped_line:
-                    # Transición a respuesta correcta
+                    # Transition to correct answer
                     if len(current_question['options']) < 2:
                         raise ValueError(
                             f"Line {line_number}: Minimum 2 options required. Question: '{current_question['statement'][:30]}...'"
@@ -55,7 +55,7 @@ def process_exam_file(file_path) -> List[Dict]:
                     if re.match(r'^[a-zA-Z]\)', stripped_line):
                         current_question['options'].append(stripped_line)
                     else:
-                        # Procesar como respuesta correcta
+                        # Process as correct answer
                         correct_option = stripped_line.lower().strip()
                         option_letters = [opt.split(')')[0].strip().lower() for opt in current_question['options']]
                         
@@ -84,7 +84,7 @@ def process_exam_file(file_path) -> List[Dict]:
                     current_question = None
                     state = "statement"
 
-        # Validación final del archivo
+        # Final file validation
         if not has_content:
             raise ValueError("File is completely empty")
         

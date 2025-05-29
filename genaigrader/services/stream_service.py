@@ -4,7 +4,7 @@ import time
 from django.db import transaction
 from django.utils import timezone
 from genaigrader.models import Evaluation, QuestionEvaluation
-from genaigrader.services.evaluation_service import generate_prompt
+from genaigrader.services.llm_service import generate_prompt
 
 # Set logging level to INFO
 logging.basicConfig(level=logging.INFO)
@@ -86,7 +86,6 @@ def stream_responses(questions, user_prompt, llm, total_questions, exam):
         for q_eval in question_evaluations:
             q_eval.evaluation = evaluation
             q_eval.save()
-
 
 def process_question(correct_count, index, question, user_prompt, llm, total_questions, evaluation, question_evaluations):
     """
