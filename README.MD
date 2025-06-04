@@ -50,7 +50,7 @@ GenAI Grader is a web platform for automated exam grading using both local (Olla
 3. Create courses and upload exams.
 4. Manage models in the "Models" section.
 5. Run batch evaluations from "Batch Evaluations".
-6. View results and analytics in "Results" and "Analysis".
+6. View results and analytics in "Analysis".
 
 ## Project Structure
 

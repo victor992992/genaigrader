@@ -98,6 +98,7 @@ body {
 }
 
 /* Botones de navegación */
+.boton[href*="/"],
 .boton[href*="evaluate"],
 .boton[href*="course"],
 .boton[href*="analysis"],
@@ -109,6 +110,7 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+.boton[href*="/"]:hover,
 .boton[href*="evaluate"]:hover,
 .boton[href*="course"]:hover,
 .boton[href*="analysis"]:hover,
